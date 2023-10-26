@@ -1,2 +1,3 @@
-# practica-SSDD
-Práctica para la asignatura de Sistemas Distribuidos
+# Práctica Sistemas Distribuidos
+Práctica para la asignatura de Sistemas Distribuidoss
+s
