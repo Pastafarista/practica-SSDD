@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "./utils.h"
+#include "./include/utils.h"
 
-int main(int argc, char const *argv[])
+int main()
 {
-    
     std::cout<<"Server iniciado\n";
 
     int serverSocket = initServer(15000);
