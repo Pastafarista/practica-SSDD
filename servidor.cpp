@@ -24,6 +24,12 @@ int main()
         std::vector<unsigned char> buffOut;
 
         std::cout << "Cliente conectado: " << clientId << std::endl;
+
+        //recibimos el mensaje del cliente
+        recvMSG(clientId, buffIn);
+
+        //mostramos el mensaje recibido
+        std::cout << "Mensaje recibido: " << unpack<int>(buffIn) << std::endl;
     }
 
     close(serverSocket);

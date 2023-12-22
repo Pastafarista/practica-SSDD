@@ -86,11 +86,36 @@ int getNumClients();
 int getClientID(int numClient);
 int getLastClientID();
 
+template <typename T>
 
+void pack(std::vector<unsigned char> &packet, T data)
+{
+	unsigned char* ptr=(unsigned char*)&data;
+	int numBytes=sizeof(T);
+	int size=packet.size();
+	packet.resize(size+numBytes);
+	std::copy(ptr,ptr+numBytes,packet.begin()+size);	
+}
+
+template <typename T>
+T unpack(std::vector<unsigned char> &packet)
+{
+	T data;
+	T* ptr=(T*)packet.data();
+	int numBytes=sizeof(T);
+	int size=packet.size();
+	
+	data=ptr[0];
+	for(int i=numBytes;i<size;i++)
+	{
+		packet[i-numBytes]=packet[i];
+	}
+	packet.resize(size-numBytes);
+
+	return data;
+}
 
 extern std::map<unsigned int,connection_t> clientList;
-
-
 
 template<typename t>
 void recvMSG(int clientID, std::vector<t> &data){
