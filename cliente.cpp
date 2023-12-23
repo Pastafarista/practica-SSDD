@@ -2,6 +2,7 @@
 # include <stdlib.h>
 # include <iostream>
 # include "./include/utils.h"
+# include "./include/operaciones.h"
 
 int main(int argc, char const *argv[])
 {
