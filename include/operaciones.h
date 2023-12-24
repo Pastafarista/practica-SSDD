@@ -40,7 +40,7 @@ typedef struct __attribute__ ((packed)){
 			char *data;
 			unsigned long int dataLength;
 		}readFile;
-		
+
 		struct{
 			int res;
 		}writeFile;
