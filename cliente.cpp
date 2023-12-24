@@ -54,7 +54,15 @@ int main(int argc, char const *argv[])
 
                     archivos=*res.listFiles.fileList;
 
-                    for (auto &archivo:archivos)
+                    if (archivos.empty())
+                    {
+                        std::cout<<"No hay archivos\n";
+                    }
+
+                    // Mostrar el tamaño del vector
+                    std::cout<<"El tamaño del vector es: "<<archivos.size()<<"\n";
+
+                    for (auto archivo:archivos)
                     {
                         std::cout<<archivo<<"\n";
                     }
