@@ -1,9 +1,9 @@
 #pragma once
 
 typedef enum{
-	listFiles=1,
-	readFile=2,
-	writeFile=3
+	opListFiles=1,
+	opReadFile=2,
+	opWriteFile=3
 }rpcTipoOperacion;
 
 typedef struct __attribute__ ((packed)){
@@ -37,8 +37,8 @@ typedef struct __attribute__ ((packed)){
 		}listFiles;
 
 		struct{
-			char *data;
-			unsigned long int dataLength;
+			char **data;
+			unsigned long int *dataLength;
 		}readFile;
 
 		struct{
@@ -109,17 +109,17 @@ void serializaInvocacion(rpcInvocacion op, std::vector<unsigned char> &packet)
 	switch(op.tipoOp)
 			{
 
-				case listFiles:
+				case opListFiles:
 				{
 					pack(packet, op.listFiles.none);
 				}break;
 
-				case readFile:
+				case opReadFile:
 				{
 					pack(packet,op.readFile.fileName);
 				}break;
 
-				case writeFile:
+				case opWriteFile:
 				{
 					pack(packet,op.writeFile.fileName);
 					pack(packet,op.writeFile.data);
@@ -145,17 +145,17 @@ rpcInvocacion deserializaInvocacion(std::vector<unsigned char> &packet)
 	
 	switch(op.tipoOp)
 			{
-				case listFiles:
+				case opListFiles:
 				{
 					unpackv(packet, &op.listFiles.none ,0);
 				}break;
 
-				case readFile:
+				case opReadFile:
 				{
 					unpackv(packet,&op.readFile.fileName,1);
 				}break;
 
-				case writeFile:
+				case opWriteFile:
 				{
 					unpackv(packet,&op.writeFile.fileName,1);
 					unpackv(packet,&op.writeFile.data,1);

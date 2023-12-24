@@ -3,15 +3,16 @@
 #include <iostream>
 #include "./include/utils.h"
 #include "./include/operaciones.h"
-#include "./fileManager/filemanager.h"
+#include "./include/filemanager.h"
 
 int main()
 {
-    std::cout<<"Server iniciado\n";
-
     int serverSocket = initServer(15000);
 
-    FileManager fileManager("./files");
+    std::cout<<"Server iniciado\n";
+    std::cout<<"Esperando conexión...\n";
+
+    FileManager fileManager = FileManager("/home/antonio/practica-SSDD/files");
 
     while(true)
     {
@@ -46,29 +47,29 @@ int main()
 			switch(op.tipoOp)
 			{
 
-                case listFiles:
+                case opListFiles:
                 {
                     rpcResultado resultado;
-                    resultado.tipoOp=listFiles;
+                    resultado.tipoOp=opListFiles;
                     
                     resultado.listFiles.fileList=fileManager.listFiles();
 
                     buffOut.push_back(resultado);
                 }break;
 
-                case readFile:
+                case opReadFile:
                 {
                     rpcResultado resultado;
-                    resultado.tipoOp=readFile;
+                    resultado.tipoOp=opReadFile;
 
-                    fileManager.readFile(op.readFile.fileName, resultado.readFile.data, resultado.readFile.dataLength);
+                    fileManager.readFile(op.readFile.fileName, *resultado.readFile.data, *resultado.readFile.dataLength);
                     buffOut.push_back(resultado);
                 }break;
 
-                case writeFile:
+                case opWriteFile:
                 {
                     rpcResultado resultado;
-                    resultado.tipoOp=writeFile;
+                    resultado.tipoOp=opWriteFile;
                     
                     fileManager.writeFile(op.writeFile.fileName, op.writeFile.data, op.writeFile.dataLength);
 

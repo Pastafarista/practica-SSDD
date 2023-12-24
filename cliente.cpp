@@ -6,14 +6,19 @@
 
 int main(int argc, char const *argv[])
 {
-    //iniciar conexión server
-	auto serverConnection=initClient("172.31.58.139",15000);
 
     std::cout<<"Cliente iniciado\n";
+
+    std::cout << "Conectando con el servidor...\n";
+
+    //iniciar conexión server
+	auto serverConnection=initClient("172.24.247.220",15000);
+
+    std::cout<<"Conexión exitosa\n";
 	
 	// crear invocación operacion
     rpcInvocacion op1;
-    op1.tipoOp=listFiles;
+    op1.tipoOp=opListFiles;
     op1.listFiles.none=0;
 	
 	// enviar invocación
@@ -23,6 +28,8 @@ int main(int argc, char const *argv[])
     // empaquetar la operación
 	pack<unsigned char>(buffOut,1);
 	serializaInvocacion(op1,buffOut);
+
+    std::cout << "Enviando operación\n";
 
     // enviar la operación
 	sendMSG(serverConnection.serverId,buffOut);
@@ -36,8 +43,11 @@ int main(int argc, char const *argv[])
 			switch(res.tipoOp)
 			{
 
-                case listFiles:
+                case opListFiles:
                 {
+
+                    // Mostrar el contenido de la lista de archivos
+
                     std::cout<<"Los archivos son: \n";
 
                     std::vector<std::string*> archivos;
@@ -46,24 +56,25 @@ int main(int argc, char const *argv[])
 
                     for (auto &archivo:archivos)
                     {
-                        std::cout<<*archivo<<"\n";
+                        std::cout<<archivo<<"\n";
                     }
-                    
+
                 }break;
 
-                case readFile:
+                case opReadFile:
                 {
-
                     std::cout<<"Contenido del arhivo: \n";
                     
-                    for(auto &file:res.readFile.data)
+                    for(int i=0; i<*res.readFile.dataLength; i++)
                     {
-                        std::cout<<file;
+                        std::cout << res.readFile.data[i];
                     }
+
+                    std::cout<<"\n";
 
                 }
 
-                case writeFile:
+                case opWriteFile:
                 {
                     if (res.writeFile.res == 0)
                     {
