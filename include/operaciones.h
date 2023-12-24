@@ -1,47 +1,29 @@
 #pragma once
 
 typedef enum{
-	
-	opSumaDouble=1,
-	opSumaFloat=2,
-	opSumaInt=3,
-	opSumaVector4Int=4
+	listFiles=1,
+	readFile=2,
+	writeFile=3
 }rpcTipoOperacion;
-
-typedef enum personaOp{
-	
-	constructorOp=1,
-	setDniOp=2,setNombreOp=3,setEdadOp=4,
-	getDniOp=5,getNombreOp=6,getEdadOp=7,
-	saveOp=8,loadOp=9,
-	destructorOp=10
-}personaOp;
-
-
 
 typedef struct __attribute__ ((packed)){
 	rpcTipoOperacion tipoOp;
 	union{
-		struct{
-			int dato1;
-			int dato2;
-		}sumaInt;	
 
 		struct{
-			float dato1;
-			float dato2;
-		}sumaFloat;	
+			char *none;
+		}listFiles;
+
+		struct
+		{
+			char *fileName;
+		}readFile;
 
 		struct{
-			double dato1;
-			double dato2;
-		}sumaDouble;
-		
-		struct{
-			int dato1[4];
-			int dato2[4];
-		}sumaVector4Int;
-		
+			char *fileName;
+			char *data;
+			unsigned long int dataLength;
+		}writeFile;
 	};
 }rpcInvocacion;
 
@@ -49,22 +31,19 @@ typedef struct __attribute__ ((packed)){
 typedef struct __attribute__ ((packed)){
 	rpcTipoOperacion tipoOp;
 	union{
-		struct{
-			int res;
-		}sumaInt;	
 
 		struct{
-			float res;
-		}sumaFloat;	
+			std::vector<std::string*>* fileList;
+		}listFiles;
 
 		struct{
-			double res;
-		}sumaDouble;
+			char *data;
+			unsigned long int dataLength;
+		}readFile;
 		
 		struct{
-			int res[4];
-		}sumaVector4Int;
-
+			int res;
+		}writeFile;
 	};		
 }rpcResultado;
 
@@ -118,8 +97,6 @@ void unpackv(std::vector<unsigned char> &packet, T* data, int size)
 	}
 }
 
-
-
 void serializaInvocacion(rpcInvocacion op, std::vector<unsigned char> &packet)
 {
 	
@@ -131,34 +108,28 @@ void serializaInvocacion(rpcInvocacion op, std::vector<unsigned char> &packet)
 	
 	switch(op.tipoOp)
 			{
-				case opSumaInt:
+
+				case listFiles:
 				{
-					pack(packet,op.sumaInt.dato1);
-					pack(packet,op.sumaInt.dato2);
+					pack(packet, op.listFiles.none);
 				}break;
-				
-				case opSumaFloat:
+
+				case readFile:
 				{
-					pack(packet,op.sumaFloat.dato1);
-					pack(packet,op.sumaFloat.dato2);
+					pack(packet,op.readFile.fileName);
 				}break;
-			
-				case opSumaDouble:
+
+				case writeFile:
 				{
-					pack(packet,op.sumaDouble.dato1);
-					pack(packet,op.sumaDouble.dato2);
+					pack(packet,op.writeFile.fileName);
+					pack(packet,op.writeFile.data);
+					pack(packet,op.writeFile.dataLength);
 				}break;
-			
-				case opSumaVector4Int:
-				{
-					packv(packet,op.sumaVector4Int.dato1,4);
-					packv(packet,op.sumaVector4Int.dato2,4);
-				}break;
+
 				default:
 					std::cout<<"Error:  Operación no definida\n";
 				break;		
 			}
-	
 }
 
 
@@ -174,29 +145,23 @@ rpcInvocacion deserializaInvocacion(std::vector<unsigned char> &packet)
 	
 	switch(op.tipoOp)
 			{
-				case opSumaInt:
+				case listFiles:
 				{
-					unpackv(packet,&op.sumaInt.dato1,1);
-					unpackv(packet,&op.sumaInt.dato2,1);
+					unpackv(packet, &op.listFiles.none ,0);
 				}break;
-				
-				case opSumaFloat:
+
+				case readFile:
 				{
-					unpackv(packet,&op.sumaFloat.dato1,1);
-					unpackv(packet,&op.sumaFloat.dato2,1);
+					unpackv(packet,&op.readFile.fileName,1);
 				}break;
-			
-				case opSumaDouble:
+
+				case writeFile:
 				{
-					unpackv(packet,&op.sumaDouble.dato1,1);
-					unpackv(packet,&op.sumaDouble.dato2,1);
+					unpackv(packet,&op.writeFile.fileName,1);
+					unpackv(packet,&op.writeFile.data,1);
+					unpackv(packet,&op.writeFile.dataLength,1);
 				}break;
-			
-				case opSumaVector4Int:
-				{
-					unpackv(packet,op.sumaVector4Int.dato1,4);
-					unpackv(packet,op.sumaVector4Int.dato2,4);
-				}break;
+
 				default:
 					std::cout<<"Error:  Operación no definida\n";
 				break;		
