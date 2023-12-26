@@ -1,3 +1,2 @@
 # Práctica Sistemas Distribuidos
-Práctica para la asignatura de Sistemas Distribuidoss
-s
+Práctica para la asignatura de Sistemas Distribuidos
