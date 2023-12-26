@@ -150,8 +150,6 @@ void process(std::string line, unsigned int serverId)
 
     std::string command = words[0];
 
-    std::cout << "Comando: " << command << "\n";
-
     if (command == "ls")
     {
         listFiles(serverId);
@@ -178,7 +176,7 @@ void process(std::string line, unsigned int serverId)
         }
         else{            
             
-            // juntar todos los argumentos en un string
+            // juntar todos los argumentos siguientes en un string
             std::string data = "";
 
             for(int i = 2; i < words.size(); i++)
@@ -200,12 +198,17 @@ void process(std::string line, unsigned int serverId)
         endConnection(serverId);
         exit(0);
     }
+    else if(command == "clear")
+    {
+        system("clear");
+    }
     else if(command == "help")
     {
         std::cout << "Comandos disponibles:\n";
         std::cout << "ls: Listar ficheros del servidor\n";
         std::cout << "cat: Leer fichero del servidor\n";
         std::cout << "write: Escribir fichero en el servidor\n";
+        std::cout << "clear: Limpiar la pantalla\n";
         std::cout << "exit: Salir del programa\n";
     }
     else
