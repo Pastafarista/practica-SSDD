@@ -149,8 +149,6 @@ void recvMSG(int clientID, std::vector<t> &data){
 
 }
 
-
-
 /** precondiciones, variables, etc...**/
 
 template<typename t>
