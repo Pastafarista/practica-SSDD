@@ -28,7 +28,9 @@ class ConexionCliente{
             return terminarConexion;
 		}
 
-		~ConexionCliente(){};
+		~ConexionCliente(){
+            delete fileManager;
+        };
 		
 		void recibeOp(){
             // recibimos la operación
@@ -48,8 +50,11 @@ class ConexionCliente{
                 {
                     std::cout << "Cliente " << clientId << " - Cerrando conexión\n";
                     terminarConexion = true;
-                    closeConnection(clientId);
+
+                    // enviar respuesta
+                    pack(buffOut,(int)1);                    
                 }
+                break;
 
                 case opListFiles:
                 {

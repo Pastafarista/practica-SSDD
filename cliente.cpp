@@ -4,6 +4,32 @@
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 
+void endConnection(unsigned int serverId){
+    std::cout << "Cerrando conexión...\n";
+
+    // enviar petición de operación
+    std::vector<unsigned char> buffOut;
+    pack<tipoOperacion>(buffOut, opEndConnection);
+
+    // enviar operación
+    sendMSG(serverId, buffOut);
+
+    // recibir respuesta
+    std::vector<unsigned char> buffIn;
+    recvMSG(serverId, buffIn);
+
+    int ok = unpack<int>(buffIn);
+
+    if(ok)
+    {
+        std::cout << "Conexión cerrada\n";
+    }
+    else
+    {
+        std::cout << "Error al cerrar la conexión\n";
+    }
+}
+
 void listFiles(unsigned int serverId)
 {
     std::cout<<"Listando ficheros...\n";
@@ -90,6 +116,7 @@ int main(int argc, char const *argv[])
 
     //lógica
     readFile(serverConnection.serverId, "fichero.txt"); // leer un fichero que no existe
+    endConnection(serverConnection.serverId); // cerrar conexión server
 
 	//cerrar conexión server
 	closeConnection(serverConnection.serverId);
