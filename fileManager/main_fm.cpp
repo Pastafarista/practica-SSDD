@@ -14,7 +14,7 @@ int main(int argc,char** argv)
 
     char* data=nullptr;
     unsigned long int fileLen=0;
-    fm->readFile(&(*(vfiles->at(0)))[0],data,fileLen);
+    fm->readFile( &(*(vfiles->at(0)))[0],data,fileLen) ;
     cout<<"Escribiendo el primer fichero del directorio de prueba:\n";
     fm->writeFile(&(*(vfiles->at(0)))[0],data,fileLen);
     cout<<"Liberando lista de ficheros:\n";
