@@ -20,9 +20,12 @@ void atiendeCliente(int clientId)
 
 int main()
 {
-    int serverSocket = initServer(15000);
 
-    std::cout << "Server iniciado\n";
+    const int PUERTO = 15000;
+
+    int serverSocket = initServer(PUERTO);
+
+    std::cout << "Server iniciado en el puerto " << PUERTO << "\n";
     std::cout << "Esperando conexión...\n";
 
     while(true)

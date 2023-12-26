@@ -106,10 +106,8 @@ void readFile(unsigned int serverId, std::string fileName)
 void process(std::string line, unsigned int serverId)
 {
 
-    // split line
-
+    // separar comando y argumentos
     std::string command = line.substr(0, line.find(" "));
-
     std::string args = line.substr(line.find(" ")+1);
 
     if (command == "ls")
@@ -119,16 +117,13 @@ void process(std::string line, unsigned int serverId)
     else if(command == "cat")
     {
         // comprobar si se ha introducido un nombre de fichero
-        if(args.empty())
+        if(args.empty() || line.find(" ") == std::string::npos)
         {
             std::cout << "Uso: cat <nombre_fichero>\n";
             return;
         }
         else{
-            std::string fileName;
-            std::cout << "Introduzca el nombre del fichero: ";
-            std::cin >> fileName;
-            readFile(serverId,fileName);
+            readFile(serverId, args);
         }
     }
     else if(command == "exit")
