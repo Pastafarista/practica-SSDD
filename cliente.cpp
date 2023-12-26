@@ -300,6 +300,7 @@ void process(std::string line, unsigned int serverId)
         std::cout << "cat: Leer fichero del servidor\n";
         std::cout << "write: Escribir fichero en el servidor\n";
         std::cout << "upload: Subir fichero al servidor\n";
+        std::cout << "download: Descargar fichero del servidor\n";
         std::cout << "clear: Limpiar la pantalla\n";
         std::cout << "exit: Salir del programa\n";
     }

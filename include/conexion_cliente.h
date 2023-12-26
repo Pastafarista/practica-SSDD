@@ -1,18 +1,19 @@
-#pragma once
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include "utils.h"
-#include "operaciones.h"
-#include "filemanager.h"
+# pragma once
+# include <stdio.h>
+# include <stdlib.h>
+# include <iostream>
+# include <string>
+# include "utils.h"
+# include "operaciones.h"
+# include "filemanager.h"
+# define RUTA "/home/antonio/practica-SSDD/files"
 
 class ConexionCliente{
 
 	private:
 		int clientId = -1;
         bool terminarConexion = false;
-        FileManager* fileManager = new FileManager("/home/antonio/practica-SSDD/files");
+        FileManager* fileManager = new FileManager(RUTA);
 
 	public:
 		ConexionCliente(int clientId)
