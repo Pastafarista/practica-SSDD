@@ -1,8 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <thread>
 #include "./include/utils.h"
 #include "./include/conexion_cliente.h"
+
+void atiendeCliente(int clientId)
+{
+	// creamos un objeto de la clase ConexionCliente
+    ConexionCliente c = ConexionCliente(clientId);
+ 
+    // mientras no cierre conexión
+    do
+    {
+        // recibir paquete operación y atender operación
+        c.recibeOp();
+    }while(!c.connectionClosed());
+}
 
 int main()
 {
@@ -10,8 +24,6 @@ int main()
 
     std::cout << "Server iniciado\n";
     std::cout << "Esperando conexión...\n";
-
-    FileManager *fileManager = new FileManager("/home/antonio/practica-SSDD/files");
 
     while(true)
     {
@@ -24,15 +36,8 @@ int main()
         // obtenemos el id del cliente
         auto clientId = getLastClientID();
 		
-        // creamos un objeto de la clase ConexionCliente
-        ConexionCliente c = ConexionCliente(clientId);
- 
-        // mientras no cierre conexión
-        do
-        {
-            // recibir paquete operación y atender operación
-            c.recibeOp();
-        }while(!c.connectionClosed());
+        // creamos un hilo para atender al cliente
+		std::thread* th=new std::thread (atiendeCliente,clientId);
     }
 
     return 0;
