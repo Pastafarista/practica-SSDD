@@ -1,13 +1,13 @@
 #pragma once
 
 typedef enum{
+	opEndConnection=0,
 	opListFiles=1,
 	opReadFile=2,
 	opWriteFile=3
 }tipoOperacion;
 
 template <typename T>
-
 
 void pack(std::vector<unsigned char> &packet, T data)
 {
