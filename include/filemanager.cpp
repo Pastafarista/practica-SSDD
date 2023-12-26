@@ -103,3 +103,13 @@ void FileManager::writeFile(char* fileName, char* data, unsigned long dataLength
         files[ string(fileName)]=new string(fileName);
 
 }
+
+/**
+ * @brief FileManager::fileExists Comprueba si existe un fichero en el directorio que se usó en el contructor
+ * @param fileName Nombre del fichero a comprobar
+ * @return true si existe, false si no
+ */
+bool FileManager::fileExists(char* fileName)
+{
+    return files.find(string(fileName))!=files.end();
+}

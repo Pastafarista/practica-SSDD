@@ -69,6 +69,14 @@ int main()
                 fileName.resize(fileNameLength);
                 unpackv(buffIn,fileName.data(),fileNameLength);
 
+                // comprobar si existe el fichero
+                if(!fileManager->fileExists((char*)fileName.data()))
+                {
+                    std::cout << "Cliente " << clientId << " - El fichero no existe\n";
+                    pack(buffOut,(int)0);
+                    break;
+                }
+
                 // leer fichero
                 std::cout << "Cliente " << clientId << " - Leyendo fichero " << fileName << "\n";
                 char* data;

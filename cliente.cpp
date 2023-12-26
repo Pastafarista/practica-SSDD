@@ -89,7 +89,7 @@ int main(int argc, char const *argv[])
     std::cout<<"Conexión exitosa\n";
 
     //lógica
-    listFiles(serverConnection.serverId);
+    readFile(serverConnection.serverId, "fichero.txt"); // leer un fichero que no existe
 
 	//cerrar conexión server
 	closeConnection(serverConnection.serverId);

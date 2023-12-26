@@ -20,6 +20,7 @@ public:
     void readFile(char* fileName, char* &data, unsigned long int & dataLength);
     void writeFile(char* fileName, char* data, unsigned long int dataLength);
     void freeListedFiles(vector<string*>* fileList);
+    bool fileExists(char* fileName);
 };
 
 #endif // FILEMANAGER_H
