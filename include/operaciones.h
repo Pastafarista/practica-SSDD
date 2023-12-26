@@ -4,7 +4,7 @@ typedef enum{
 	opEndConnection=0,
 	opListFiles=1,
 	opReadFile=2,
-	opWriteFile=3
+	opWriteFile=3,
 }tipoOperacion;
 
 template <typename T>

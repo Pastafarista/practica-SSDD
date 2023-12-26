@@ -5,6 +5,7 @@
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 # include "./include/filemanager.h"
+# define RUTA "/home/antonio/practica-SSDD"
 
 void endConnection(unsigned int serverId){
     std::cout << "Cerrando conexión...\n";
@@ -141,13 +142,13 @@ void uploadFile(unsigned int serverId, std::string fileName)
 {
     std::cout<<"Subiendo fichero " << fileName  << "...\n";
 
-    FileManager* fileManager = new FileManager("/home/antonio/practica-SSDD");
+    FileManager* fileManager = new FileManager(RUTA);
 
     // comprobar si existe el fichero
 
     if(!fileManager->fileExists((char*)fileName.data()))
     {
-        std::cout << "El fichero no existe\n";
+        std::cout << "El fichero " << RUTA << "/" << fileName << " no existe\n";
         return;
     }
 
@@ -160,9 +161,51 @@ void uploadFile(unsigned int serverId, std::string fileName)
     writeFile(serverId, fileName, data);
 }
 
+void downloadFile(unsigned int serverId, std::string fileName)
+{
+    std::cout<<"Descargando fichero " << fileName  << "...\n";
+
+    std::vector<unsigned char> buffOut;
+
+    // empaquetar operación
+    pack<tipoOperacion>(buffOut, opReadFile); // tipo de operación
+    pack(buffOut,(int)(fileName.length()+1)); // tamaño del nombre del fichero
+	packv(buffOut,fileName.data(),(int)(fileName.length()+1)); // nombre del fichero
+
+    //enviar operación
+    sendMSG(serverId, buffOut);
+
+    // recibir respuesta
+    std::vector<unsigned char> buffIn;
+    recvMSG(serverId, buffIn);
+
+    // desempaquetar respuesta
+
+    int ok = unpack<int>(buffIn);
+
+    if(ok)
+    {
+        int dataLength = unpack<int>(buffIn);
+        char* data = new char[dataLength];
+        unpackv(buffIn,data,dataLength);
+        
+        FileManager fileManager(RUTA);
+
+        // escribir fichero
+        fileManager.writeFile((char*)fileName.data(), data, dataLength);
+
+        std::cout << "El fichero" << fileName << " ha sido descargado correctamente en " << RUTA << "/" << fileName << "\n";
+
+        delete[] data;
+    }
+    else
+    {
+        std::cout << "Error al descargar el archivo " << fileName << "\n";
+    }
+}
+
 void process(std::string line, unsigned int serverId)
 {
-
     // separar comando
     std::string tmp; 
     std::stringstream ss(line);
@@ -181,7 +224,7 @@ void process(std::string line, unsigned int serverId)
     else if(command == "cat")
     {
         // comprobar si se ha introducido un nombre de fichero
-        if(words.size() < 2)
+        if(words.size() != 2)
         {
             std::cout << "Uso: cat <nombre_fichero>\n";
             return;
@@ -229,13 +272,25 @@ void process(std::string line, unsigned int serverId)
     else if(command == "upload")
     {
         // comprobar si se ha introducido un nombre de fichero
-        if(words.size() < 2)
+        if(words.size() != 2)
         {
             std::cout << "Uso: upload <nombre_fichero>\n";
             return;
         }
         else{
             uploadFile(serverId, words[1]);
+        }
+    }
+    else if(command == "download")
+    {
+        // comprobar si se ha introducido un nombre de fichero
+        if(words.size() != 2)
+        {
+            std::cout << "Uso: download <nombre_fichero>\n";
+            return;
+        }
+        else{
+            downloadFile(serverId, words[1]); 
         }
     }
     else if(command == "help")
