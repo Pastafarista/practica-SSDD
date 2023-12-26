@@ -42,21 +42,43 @@ int main()
             {
                 std::cout << "Cliente " << clientId << " - Listando ficheros\n";
 
+
+
                 // enviar respuesta
                 pack(buffOut,(int)1);
 
             }
             break;
 
-            case opWriteFile:
-            {
-                std::cout << "Cliente " << clientId << " - Escribiendo fichero\n";
-            }
-            break;
-
             case opReadFile:
             {
                 std::cout << "Cliente " << clientId << " - Leyendo fichero\n";
+
+                // recibir nombre del fichero
+                std::string fileName;
+                int fileNameLength = unpack<int>(buffIn);
+                fileName.resize(fileNameLength);
+                unpackv(buffIn,fileName.data(),fileNameLength);
+
+                // leer fichero
+                std::cout << "Cliente " << clientId << " - Leyendo fichero " << fileName << "\n";
+                char* data;
+                unsigned long int dataLength;
+                fileManager->readFile((char*)fileName.data(),data,dataLength);
+
+                // empaquetar respuesta
+                pack(buffOut,(int)1);
+                pack(buffOut,(int)dataLength);
+                packv(buffOut,data,dataLength);
+
+                // liberar memoria
+                delete[] data;
+            }
+            break;
+
+            case opWriteFile:
+            {
+                std::cout << "Cliente " << clientId << " - Escribiendo fichero\n";
             }
             break;
 

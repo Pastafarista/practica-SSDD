@@ -7,14 +7,15 @@
 void listFiles(unsigned int serverId)
 {
     std::cout<<"Listando ficheros...\n";
-    //enviar petición de operación
+
+    // enviar petición de operación
     std::vector<unsigned char> buffOut;
     pack<tipoOperacion>(buffOut, opListFiles);
 
-    //enviar operación
+    // enviar operación
     sendMSG(serverId, buffOut);
 
-    //recibir respuesta
+    // recibir respuesta
     std::vector<unsigned char> buffIn;
     recvMSG(serverId, buffIn);
 
@@ -41,10 +42,47 @@ void listFiles(unsigned int serverId)
     }*/
 }
 
+void readFile(unsigned int serverId, std::string fileName)
+{
+    std::cout<<"Leyendo fichero...\n";
+
+    std::vector<unsigned char> buffOut;
+
+    // empaquetar operación
+    pack<tipoOperacion>(buffOut, opReadFile); // tipo de operación
+    pack(buffOut,(int)(fileName.length()+1)); // tamaño del nombre del fichero
+	packv(buffOut,fileName.data(),(int)(fileName.length()+1)); // nombre del fichero
+
+    //enviar operación
+    sendMSG(serverId, buffOut);
+
+    // recibir respuesta
+    std::vector<unsigned char> buffIn;
+    recvMSG(serverId, buffIn);
+
+    // desempaquetar respuesta
+
+    int ok = unpack<int>(buffIn);
+
+    if(ok)
+    {
+        std::cout << "Respuesta correcta\n";
+        int dataLength = unpack<int>(buffIn);
+        char* data = new char[dataLength];
+        unpackv(buffIn,data,dataLength);
+        std::cout << "El fichero contiene:\n"<<data<<"\n";
+        delete[] data;
+    }
+    else
+    {
+        std::cout<<"Respuesta incorrecta\n";
+    }
+}
+
 int main(int argc, char const *argv[])
 {
 
-    std::cout<<"Cliente iniciado\n";
+    std::cout << "Cliente iniciado\n";
 
     std::cout << "Conectando con el servidor...\n";
 
@@ -54,7 +92,7 @@ int main(int argc, char const *argv[])
     std::cout<<"Conexión exitosa\n";
 
     //lógica
-    listFiles(serverConnection.serverId);
+    readFile(serverConnection.serverId, "ejemplo.txt");
 
 	//cerrar conexión server
 	closeConnection(serverConnection.serverId);
