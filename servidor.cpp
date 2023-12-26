@@ -9,8 +9,8 @@ int main()
 {
     int serverSocket = initServer(15000);
 
-    std::cout<<"Server iniciado\n";
-    std::cout<<"Esperando conexión...\n";
+    std::cout << "Server iniciado\n";
+    std::cout << "Esperando conexión...\n";
 
     FileManager *fileManager = new FileManager("/home/antonio/practica-SSDD/files");
 
@@ -27,7 +27,7 @@ int main()
 		
 
         // recibimos la operación
-        std::cout<<"Cliente "<<clientId<<" - recibiendo operación\n";
+        std::cout << "Cliente " << clientId << " - recibiendo operación\n";
 
 		std::vector<unsigned char> buffIn;
 		std::vector<unsigned char> buffOut;
@@ -42,11 +42,20 @@ int main()
             {
                 std::cout << "Cliente " << clientId << " - Listando ficheros\n";
 
+                // leer lista de ficheros
+                std::vector<std::string*>* fileList = fileManager->listFiles();
 
-
-                // enviar respuesta
+                // empaquetar respuesta
                 pack(buffOut,(int)1);
+                pack(buffOut,(int)fileList->size());
+                for(auto fileName : *fileList)
+                {
+                    pack(buffOut,(int)(fileName->length()+1));
+                    packv(buffOut,fileName->data(),(int)(fileName->length()+1));
+                }
 
+                // liberar memoria
+                fileManager->freeListedFiles(fileList);
             }
             break;
 
@@ -84,7 +93,7 @@ int main()
 
             default:
             {
-                    std::cout<<"ERROR:"<<__FILE__<<":"<<__LINE__<<" operación no definida\n";
+                    std::cout<<"ERROR:" << __FILE__ << ":" << __LINE__ << " operación no definida\n";
 
 					// enviar respuesta de error
 					pack(buffOut,(int)0);
@@ -97,7 +106,7 @@ int main()
         sendMSG(clientId,buffOut);
 
 
-        std::cout<<"Cliente "<<clientId<<" desconectado\n";
+        std::cout << "Cliente " << clientId << " desconectado\n";
 		
 		//cerrar cliente
 		closeConnection(clientId);

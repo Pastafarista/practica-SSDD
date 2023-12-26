@@ -23,23 +23,21 @@ void listFiles(unsigned int serverId)
 
     if(ok)
     {
-        std::cout<<"Respuesta correcta\n";
+        int numFiles = unpack<int>(buffIn);
+        std::cout << "El servidor contiene " << numFiles << " ficheros:\n";
+        for(int i=0;i<numFiles;i++)
+        {
+            int fileNameLength = unpack<int>(buffIn);
+            char* fileName = new char[fileNameLength];
+            unpackv(buffIn,fileName,fileNameLength);
+            std::cout << fileName << "\n";
+            delete[] fileName;
+        }
     }
     else
     {
-        std::cout<<"Respuesta incorrecta\n";
+        std::cout << "Error al leer el listado de archivos\n";
     }
-
-    //desempaquetar respuesta
-    /*int numFiles = unpack<int>(buffIn);
-    std::cout<<"Hay "<<numFiles<<" ficheros\n";
-    for(int i=0; i<numFiles; i++)
-    {
-        std::vector<unsigned char> buffIn;
-        recvMSG(serverId, buffIn);
-        std::string fileName = unpack<std::string>(buffIn);
-        std::cout<<fileName<<"\n";
-    }*/
 }
 
 void readFile(unsigned int serverId, std::string fileName)
@@ -66,16 +64,15 @@ void readFile(unsigned int serverId, std::string fileName)
 
     if(ok)
     {
-        std::cout << "Respuesta correcta\n";
         int dataLength = unpack<int>(buffIn);
         char* data = new char[dataLength];
         unpackv(buffIn,data,dataLength);
-        std::cout << "El fichero contiene:\n"<<data<<"\n";
+        std::cout << "El fichero contiene:\n" << data << "\n";
         delete[] data;
     }
     else
     {
-        std::cout<<"Respuesta incorrecta\n";
+        std::cout<<"Error al leer el archivo " << fileName << "\n";
     }
 }
 
@@ -92,7 +89,7 @@ int main(int argc, char const *argv[])
     std::cout<<"Conexión exitosa\n";
 
     //lógica
-    readFile(serverConnection.serverId, "ejemplo.txt");
+    listFiles(serverConnection.serverId);
 
 	//cerrar conexión server
 	closeConnection(serverConnection.serverId);
