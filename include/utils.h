@@ -146,7 +146,6 @@ void recvMSG(int clientID, std::vector<t> &data){
         printf("ERROR: recvMSG -- line : %d error fallo conexion\n", __LINE__);
         exit(0);//return error code
     }
-
 }
 
 /** precondiciones, variables, etc...**/

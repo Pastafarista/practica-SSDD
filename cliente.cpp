@@ -4,6 +4,7 @@
 # include <iostream>
 # include "./include/utils.h"
 # include "./include/operaciones.h"
+# include "./include/filemanager.h"
 
 void endConnection(unsigned int serverId){
     std::cout << "Cerrando conexión...\n";
@@ -136,6 +137,29 @@ void writeFile(unsigned int serverId, std::string fileName, std::string data)
     }
 }
 
+void uploadFile(unsigned int serverId, std::string fileName)
+{
+    std::cout<<"Subiendo fichero " << fileName  << "...\n";
+
+    FileManager* fileManager = new FileManager("/home/antonio/practica-SSDD");
+
+    // comprobar si existe el fichero
+
+    if(!fileManager->fileExists((char*)fileName.data()))
+    {
+        std::cout << "El fichero no existe\n";
+        return;
+    }
+
+    // leer fichero
+    char* data;
+    unsigned long int dataLength;
+    fileManager->readFile((char*)fileName.data(),data,dataLength);
+
+    // escribir fichero
+    writeFile(serverId, fileName, data);
+}
+
 void process(std::string line, unsigned int serverId)
 {
 
@@ -202,12 +226,25 @@ void process(std::string line, unsigned int serverId)
     {
         system("clear");
     }
+    else if(command == "upload")
+    {
+        // comprobar si se ha introducido un nombre de fichero
+        if(words.size() < 2)
+        {
+            std::cout << "Uso: upload <nombre_fichero>\n";
+            return;
+        }
+        else{
+            uploadFile(serverId, words[1]);
+        }
+    }
     else if(command == "help")
     {
         std::cout << "Comandos disponibles:\n";
         std::cout << "ls: Listar ficheros del servidor\n";
         std::cout << "cat: Leer fichero del servidor\n";
         std::cout << "write: Escribir fichero en el servidor\n";
+        std::cout << "upload: Subir fichero al servidor\n";
         std::cout << "clear: Limpiar la pantalla\n";
         std::cout << "exit: Salir del programa\n";
     }
