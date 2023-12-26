@@ -12,30 +12,39 @@ int main(int argc, char const *argv[])
     std::cout << "Conectando con el servidor...\n";
 
     //iniciar conexión server
-	auto serverConnection=initClient("172.24.247.220",15000);
+	auto serverConnection=initClient("172.24.247.220", 15000);
 
     std::cout<<"Conexión exitosa\n";
 	
 	// crear invocación operacion
-    rpcInvocacion op1;
+    rpcInvocacion op1, op2;
     op1.tipoOp=opListFiles;
     op1.listFiles.none=0;
-	
+
+    const char* fileName = "ejemplo.txt";
+
+    op2.tipoOp=opReadFile;
+    op2.readFile.fileName = (char *)fileName;
+    	
 	// enviar invocación
 	std::vector<unsigned char> buffOut;
 	std::vector<rpcResultado> buffIn;
 
     // empaquetar la operación
-	pack<unsigned char>(buffOut,1);
-	serializaInvocacion(op1,buffOut);
+	pack<unsigned char>(buffOut, 1);
+	serializaInvocacion(op2,buffOut);
 
-    std::cout << "Enviando operación\n";
+    std::cout << "Enviando operación: leer archivo " <<  op2.readFile.fileName << "\n";
 
     // enviar la operación
 	sendMSG(serverConnection.serverId,buffOut);
 
+    std::cout << "Esperando respuesta del servidor...\n";
+
 	// recibir resultados
 	recvMSG(serverConnection.serverId,buffIn);
+
+    std::cout << "Respuesta recibida, mostrando resultados:\n";
 
 	// mostrar resultados
 	{	for(auto &res:buffIn){
@@ -45,26 +54,36 @@ int main(int argc, char const *argv[])
 
                 case opListFiles:
                 {
+                    std::cout << "Listando archivos...\n";
 
-                    // Mostrar el contenido de la lista de archivos
+                    std::vector<std::string*> *archivos;
+                    archivos=res.listFiles.fileList;
 
-                    std::cout<<"Los archivos son: \n";
+                    std::cout << "Asignación correcta\n";
 
-                    std::vector<std::string*> archivos;
+                    try{
 
-                    archivos=*res.listFiles.fileList;
+                        // Ver si la lista de archivos está vacía
 
-                    if (archivos.empty())
+                        if(archivos->empty())
+                        {
+                            std::cout << "La lista de archivos está vacía\n";
+                        }
+                        else{
+                            std::cout << "La lista de archivos no está vacía\n";
+                        }
+
+                        std::cout << "Tamaño de la lista: " << archivos->size() << std::endl;
+                    }
+                    catch(const std::exception& e)
                     {
-                        std::cout<<"No hay archivos\n";
+                        std::cerr << e.what() << '\n';
                     }
 
-                    // Mostrar el tamaño del vector
-                    std::cout<<"El tamaño del vector es: "<<archivos.size()<<"\n";
-
-                    for (auto archivo:archivos)
+                    // Mostrar el contenido de la lista de archivos
+                    for(unsigned int i=0;i<archivos->size();++i)
                     {
-                        std::cout<<archivo<<"\n";
+                        std::cout<<"Fichero: "<<archivos->at(i)->c_str()<<std::endl;
                     }
 
                 }break;
@@ -99,9 +118,8 @@ int main(int argc, char const *argv[])
 				break;		
 			}
 		}
-	}/*else{
-		std::cout<<"ERROR: operaciones no válidas\n";
-	}*/
+	}
+
 	//cerrar conexión server
 	closeConnection(serverConnection.serverId);
 	return 0;

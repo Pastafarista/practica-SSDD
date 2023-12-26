@@ -12,7 +12,7 @@ int main()
     std::cout<<"Server iniciado\n";
     std::cout<<"Esperando conexión...\n";
 
-    FileManager fileManager = FileManager("/home/antonio/practica-SSDD/files");
+    FileManager *fileManager = new FileManager("/home/antonio/practica-SSDD/files");
 
     while(true)
     {
@@ -25,7 +25,6 @@ int main()
         //obtenemos el id del cliente
         auto clientId = getLastClientID();
 
-        
 		//recibir petición de operación
 		std::vector<unsigned char> buffIn;
 		std::vector<rpcInvocacion> rpcOps;
@@ -33,6 +32,9 @@ int main()
 		std::vector<rpcResultado> buffOut;
 
 		recvMSG(clientId,buffIn);
+
+        //desempaqueta operación
+        std::cout << "Cliente " << clientId << " - Desempaquetando operaciones\n";
 		
 		unsigned char numOps=unpack<unsigned char>(buffIn);
 		rpcOps.resize(numOps);
@@ -42,27 +44,40 @@ int main()
 		}
 		
 		//invoco operación
+        std::cout << "Cliente " << clientId << " - Invocando operaciones\n";
+
 		for(auto &op: rpcOps)
 		{
 			switch(op.tipoOp)
 			{
-
                 case opListFiles:
                 {
+
+                    std::cout << "Cliente " << clientId <<" - Listando archivos\n";
+
                     rpcResultado resultado;
                     resultado.tipoOp=opListFiles;
-                    
-                    resultado.listFiles.fileList=fileManager.listFiles();
+
+                    // Rellenar el vector de archivos
+                    resultado.listFiles.fileList = fileManager->listFiles();
 
                     buffOut.push_back(resultado);
+
+                    fileManager->freeListedFiles(resultado.listFiles.fileList);
                 }break;
 
                 case opReadFile:
                 {
+
+                    std::cout << "Cliente " << clientId <<" - Leyendo archivo " << op.readFile.fileName << "\n";
+
                     rpcResultado resultado;
                     resultado.tipoOp=opReadFile;
 
-                    fileManager.readFile(op.readFile.fileName, *resultado.readFile.data, *resultado.readFile.dataLength);
+                    fileManager->readFile(op.readFile.fileName, *resultado.readFile.data, *resultado.readFile.dataLength);
+
+                    std::cout << "Cliente " << clientId <<" - Guardando en el buffer de salida\n";
+
                     buffOut.push_back(resultado);
                 }break;
 
@@ -71,7 +86,7 @@ int main()
                     rpcResultado resultado;
                     resultado.tipoOp=opWriteFile;
                     
-                    fileManager.writeFile(op.writeFile.fileName, op.writeFile.data, op.writeFile.dataLength);
+                    fileManager->writeFile(op.writeFile.fileName, op.writeFile.data, op.writeFile.dataLength);
 
                     buffOut.push_back(resultado);
                 }break;
@@ -84,6 +99,8 @@ int main()
 		
 		//retorno resultado
 		sendMSG(clientId,buffOut);
+
+        std::cout<<"Cliente "<<clientId<<" desconectado\n";
 		
 		//cerrar cliente
 		closeConnection(clientId);

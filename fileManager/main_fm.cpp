@@ -3,7 +3,7 @@
 
 int main(int argc,char** argv)
 {
-    FileManager *fm=new FileManager("./dirprueba/");
+    FileManager *fm = new FileManager("/home/antonio/practica-SSDD/files");
     vector<string*>* vfiles=fm->listFiles();
     cout<<"Lista de ficheros en el directorio de prueba:\n";
     for(unsigned int i=0;i<vfiles->size();++i)
