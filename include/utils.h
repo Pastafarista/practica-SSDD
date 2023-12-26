@@ -1,3 +1,5 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS  2023/2024
 
 #ifndef  _UTILS_H_
 #define  _UTILS_H_

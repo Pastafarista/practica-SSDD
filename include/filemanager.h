@@ -1,3 +1,6 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS  2023/2024
+
 #ifndef FILEMANAGER_H
 #define FILEMANAGER_H
 #include <iostream>

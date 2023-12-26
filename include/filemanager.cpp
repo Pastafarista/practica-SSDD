@@ -1,4 +1,7 @@
-#include "./filemanager.h"
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS  2023/2024
+
+# include "./filemanager.h"
 /**
  * @brief FileManager::FileManager Constructor de la clase FileManager. Recibe por parámetros el directorio
  * que usará esta clase para indexar, almacenar y leer ficheros. Se aconseja usar una ruta completa al directorio,

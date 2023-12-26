@@ -1,3 +1,6 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS  2023/2024
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <sstream>
