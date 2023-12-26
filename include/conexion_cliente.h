@@ -114,6 +114,25 @@ class ConexionCliente{
                 case opWriteFile:
                 {
                     std::cout << "Cliente " << clientId << " - Escribiendo fichero\n";
+
+                    // recibir nombre del fichero
+                    std::string fileName;
+                    int fileNameLength = unpack<int>(buffIn);
+                    fileName.resize(fileNameLength);
+                    unpackv(buffIn, fileName.data(), fileNameLength);
+
+                    // recibir datos
+                    int dataLength = unpack<int>(buffIn);
+                    string data;
+                    data.resize(dataLength);
+                    unpackv(buffIn, (char*)data.data(), dataLength);
+
+                    // escribir fichero
+                    std::cout << "Cliente " << clientId << " - Escribiendo fichero " << fileName << "\n";
+                    fileManager->writeFile((char*)fileName.data(), (char *)data.data(), dataLength);
+
+                    // empaquetar respuesta
+                    pack(buffOut, (int)1);
                 }
                 break;
 

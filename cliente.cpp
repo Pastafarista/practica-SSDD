@@ -1,7 +1,7 @@
 # include <stdio.h>
 # include <stdlib.h>
+# include <sstream>
 # include <iostream>
-# include <string>
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 
@@ -103,12 +103,54 @@ void readFile(unsigned int serverId, std::string fileName)
     }
 }
 
+void writeFile(unsigned int serverId, std::string fileName, std::string data)
+{
+    std::cout<<"Escribiendo fichero...\n";
+
+    std::vector<unsigned char> buffOut;
+
+    // empaquetar operación
+    pack<tipoOperacion>(buffOut, opWriteFile); // tipo de operación
+    pack(buffOut,(int)(fileName.length()+1)); // tamaño del nombre del fichero
+    packv(buffOut,fileName.data(),(int)(fileName.length()+1)); // nombre del fichero
+    pack(buffOut,(int)(data.length()+1)); // tamaño de los datos
+    packv(buffOut,data.data(),(int)(data.length()+1)); // datos
+
+    //enviar operación
+    sendMSG(serverId, buffOut);
+
+    // recibir respuesta
+    std::vector<unsigned char> buffIn;
+    recvMSG(serverId, buffIn);
+
+    // desempaquetar respuesta
+    int ok = unpack<int>(buffIn);
+
+    if(ok)
+    {
+        std::cout << "Archivo " << fileName << " escrito correctamente\n";
+    }
+    else
+    {
+        std::cout << "Error al escribir el archivo " << fileName << "\n";
+    }
+}
+
 void process(std::string line, unsigned int serverId)
 {
 
-    // separar comando y argumentos
-    std::string command = line.substr(0, line.find(" "));
-    std::string args = line.substr(line.find(" ")+1);
+    // separar comando
+    std::string tmp; 
+    std::stringstream ss(line);
+    std::vector<std::string> words;
+
+    while(getline(ss, tmp, ' ')){
+        words.push_back(tmp);
+    }
+
+    std::string command = words[0];
+
+    std::cout << "Comando: " << command << "\n";
 
     if (command == "ls")
     {
@@ -117,13 +159,39 @@ void process(std::string line, unsigned int serverId)
     else if(command == "cat")
     {
         // comprobar si se ha introducido un nombre de fichero
-        if(args.empty() || line.find(" ") == std::string::npos)
+        if(words.size() < 2)
         {
             std::cout << "Uso: cat <nombre_fichero>\n";
             return;
         }
         else{
-            readFile(serverId, args);
+            readFile(serverId, words[1]);
+        }
+    }
+    else if(command == "write")
+    {
+        // comprobar si se ha introducido un nombre de fichero
+        if(words.size() < 3)
+        {
+            std::cout << "Uso: write <nombre_fichero> <data>\n";
+            return;
+        }
+        else{            
+            
+            // juntar todos los argumentos en un string
+            std::string data = "";
+
+            for(int i = 2; i < words.size(); i++)
+            {
+                data += words[i];
+                if(i != words.size()-1)
+                {
+                    data += " ";
+                }
+            }
+
+            // escribir fichero
+            writeFile(serverId, words[1], data);
         }
     }
     else if(command == "exit")
@@ -137,6 +205,7 @@ void process(std::string line, unsigned int serverId)
         std::cout << "Comandos disponibles:\n";
         std::cout << "ls: Listar ficheros del servidor\n";
         std::cout << "cat: Leer fichero del servidor\n";
+        std::cout << "write: Escribir fichero en el servidor\n";
         std::cout << "exit: Salir del programa\n";
     }
     else
