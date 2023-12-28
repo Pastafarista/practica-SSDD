@@ -8,7 +8,7 @@
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 # include "./include/filemanager.h"
-# define RUTA "/home/antonio/practica-SSDD"
+# define RUTA "/usr/src/cliente/files"
 
 void endConnection(unsigned int serverId){
     std::cout << "Cerrando conexión...\n";

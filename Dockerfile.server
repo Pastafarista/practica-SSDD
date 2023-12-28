@@ -1,0 +1,14 @@
+FROM gcc:latest
+
+# Copiar archivos
+
+COPY include /usr/src/servidor/include
+COPY servidor.cpp /usr/src/servidor
+COPY files /usr/src/servidor/files
+WORKDIR /usr/src/servidor
+
+# Compilar y ejecutar
+
+RUN g++ servidor.cpp include/conexion_cliente.h include/filemanager.cpp include/filemanager.h include/operaciones.h include/utils.cpp include/utils.h -o servidor.exe
+RUN ["chmod", "+x", "servidor.exe"]
+ENTRYPOINT [ "./servidor.exe"] 

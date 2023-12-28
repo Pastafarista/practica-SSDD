@@ -9,7 +9,7 @@
 # include "utils.h"
 # include "operaciones.h"
 # include "filemanager.h"
-# define RUTA "/home/antonio/practica-SSDD/files"
+# define RUTA "/usr/src/servidor/files"
 
 class ConexionCliente{
 
@@ -132,8 +132,16 @@ class ConexionCliente{
                     unpackv(buffIn, (char*)data.data(), dataLength);
 
                     // escribir fichero
-                    std::cout << "Cliente " << clientId << " - Escribiendo fichero " << fileName << "\n";
-                    fileManager->writeFile((char*)fileName.data(), (char *)data.data(), dataLength);
+                    std::cout << "Cliente " << clientId << " - Escribiendo fichero: " << fileName << "\n";
+
+                    try{
+                        fileManager->writeFile((char*)fileName.data(), (char *)data.data(), dataLength);
+                    }
+                   catch(exception e){
+                        std::cout << "Cliente " << clientId << " - Error al escribir el fichero: " << fileName << "\n";
+                        pack(buffOut,(int)0);
+                        break;
+                    }
 
                     // empaquetar respuesta
                     pack(buffOut, (int)1);
