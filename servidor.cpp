@@ -12,6 +12,43 @@
 # define IP_BROKER "172.24.247.220"
 # define PUERTO_BROKER 15015
 
+void atiendeCliente(int clientId); // función que atiende a un cliente
+bool conectarBroker();           // función que conecta con el broker para registrarse como servidor
+
+int main()
+{
+    int serverSocket = initServer(PUERTO);
+
+    std::cout << "Server iniciado en " << IP << ":" << PUERTO << "\n";
+
+    // conectar con el broker
+    std::cout << "Conectando con el broker en " << IP_BROKER << ":" << PUERTO_BROKER << "\n";
+
+    if(!conectarBroker())
+    {
+        return 0;
+    }
+
+    std::cout << "Esperando conexión...\n";
+
+    while(true)
+    {
+        //esperamos a que se conecte un cliente
+        while(!checkClient())
+        {
+            usleep(1000);
+        }
+
+        // obtenemos el id del cliente
+        auto clientId = getLastClientID();
+		
+        // creamos un hilo para atender al cliente
+		std::thread* th=new std::thread (atiendeCliente,clientId);
+    }
+
+    return 0;
+}
+
 void atiendeCliente(int clientId)
 {
 	// creamos un objeto de la clase ConexionCliente
@@ -76,38 +113,4 @@ bool conectarBroker()
         std::cout << "Error al conectar con el broker\n";
         return false;
     }
-}
-
-int main()
-{
-    int serverSocket = initServer(PUERTO);
-
-    std::cout << "Server iniciado en " << IP << ":" << PUERTO << "\n";
-
-    // conectar con el broker
-    std::cout << "Conectando con el broker en " << IP_BROKER << ":" << PUERTO_BROKER << "\n";
-
-    if(!conectarBroker())
-    {
-        return 0;
-    }
-
-    std::cout << "Esperando conexión...\n";
-
-    while(true)
-    {
-        //esperamos a que se conecte un cliente
-        while(!checkClient())
-        {
-            usleep(1000);
-        }
-
-        // obtenemos el id del cliente
-        auto clientId = getLastClientID();
-		
-        // creamos un hilo para atender al cliente
-		std::thread* th=new std::thread (atiendeCliente,clientId);
-    }
-
-    return 0;
 }

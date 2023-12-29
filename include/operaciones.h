@@ -14,7 +14,7 @@ typedef enum{
 typedef enum{
 	opConnectServer=0,
 	opConnectClient=1,
-	opDisconnect=2
+	opDisconnectServer=2
 }opBroker;
 
 typedef enum{

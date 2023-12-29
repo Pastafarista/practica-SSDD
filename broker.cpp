@@ -51,7 +51,7 @@ int main()
         auto clientId = getLastClientID();
 
         // recibimos la operación
-        std::cout << "Cliente " << clientId << " - recibiendo operación\n";
+        std::cout << "Cliente " << clientId << " - (?) recibiendo operación\n";
 
         std::vector<unsigned char> buffIn;
         std::vector<unsigned char> buffOut;
@@ -66,7 +66,7 @@ int main()
         {
             case opConnectServer:
             {
-                std::cout << "Servidor de objetos " << clientId << " - Conectando\n";
+                std::cout << "Cliente " << clientId << " (servidor de objetos) - Conectando\n";
 
                 // desempaquetamos la ip                
                 std::string ip;
@@ -89,7 +89,7 @@ int main()
                 servidores[clientId] = fc;
 
                 // mostrar datos del cliente
-                std::cout << "Servidor de objetos" << clientId << " - datos:\n";
+                std::cout << "Cliente " << clientId << " (servidor de objetos) - datos:\n";
                 fc.print();
 
                 // enviar respuesta
@@ -99,11 +99,11 @@ int main()
 
             case opConnectClient:
             {
-                std::cout << "Cliente " << clientId << " - Conectando\n";
+                std::cout << "Cliente " << clientId << " (cliente) - Conectando\n";
 
                 if(servidores.size() == 0)
                 {
-                    std::cout << "Cliente " << clientId << " - No hay servidores de objetos conectados\n";
+                    std::cout << "Cliente " << clientId << " (cliente) - No hay servidores de objetos conectados\n";
                     pack(buffOut,(int)0);
                     break;
                 }
@@ -125,13 +125,16 @@ int main()
 
                     if(serverId == -1)
                     {
-                        std::cout << "Cliente " << clientId << " - No hay servidores de objetos del tipo solicitado\n";
+                        std::cout << "Cliente " << clientId << " (cliente) - No hay servidores de objetos del tipo solicitado\n";
                         pack(buffOut,(int)0);
                         break;
                     }
 
                     // Enviar respuesta
-                    std::cout << "Cliente " << clientId << " - Conectado con el servidor de objetos " << servidores[serverId].ip << ":" << servidores[serverId].puerto << "\n";
+                    std::cout << "Cliente " << clientId << " (cliente) - Conectado con el servidor de objetos " << servidores[serverId].ip << ":" << servidores[serverId].puerto << "\n";
+
+                    // empaquetar respuesta
+                    pack(buffOut,(int)1);
 
                     // empaquetar ip
                     std::string ip = servidores[serverId].ip;
@@ -142,14 +145,12 @@ int main()
                     // empaquetar puerto
                     pack(buffOut, servidores[serverId].puerto);
 
-                    // enviar respuesta
-                    pack(buffOut,(int)1);
                 }
             }  
 
             default:
             {
-                std::cout << "Cliente " << clientId << " - Operación desconocida\n";
+                std::cout << "Cliente " << clientId << " - (?) Operación desconocida\n";
 
                 // enviar respuesta
                 pack(buffOut,(int)0);
@@ -158,7 +159,7 @@ int main()
         }
 
         //enviamos la respuesta
-        std::cout << "Cliente " << clientId << " - Enviando respuesta\n";
+        std::cout << "Cliente " << clientId << " - (?) Enviando respuesta\n";
         sendMSG(clientId, buffOut);
     }
 

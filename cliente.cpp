@@ -8,9 +8,62 @@
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 # include "./include/filemanager.h"
-# define IP "172.24.247.220"
+# define IP_BROKER "172.24.247.220"
 # define PUERTO_BROKER 15015
 # define RUTA "/usr/src/cliente/files"
+
+void endConnection(unsigned int serverId);  // función que cierra la conexión con el servidor
+void listFiles(unsigned int serverId);    // función que lista los ficheros del servidor
+void readFile(unsigned int serverId, std::string fileName); // función que lee un fichero del servidor
+void writeFile(unsigned int serverId, std::string fileName, std::string data);  // función que escribe un fichero en el servidor
+void uploadFile(unsigned int serverId, std::string fileName);   // función que sube un fichero al servidor
+void downloadFile(unsigned int serverId, std::string fileName); // función que descarga un fichero del servidor
+void process(std::string line, unsigned int serverId);  // función que procesa un comando introducido por el usuario
+bool conectarBroker(char* &IP, int &PUERTO);       // función que conecta con el broker para obtener los datos del servidor (ip y puerto)
+
+int main(int argc, char const *argv[])
+{
+    std::cout << "Cliente iniciado\n";
+    
+    std::cout << "Conectando con el broker...\n";
+
+    char *IP;
+    int PUERTO;
+
+    // conectar con el broker
+    if(!conectarBroker(IP, PUERTO))
+    {
+        return 0;
+    }
+
+    std::cout << "Conectando con el servidor " << IP << ":" << PUERTO << "...\n";
+
+    // iniciar conexión server
+	auto serverConnection = initClient(IP, PUERTO);
+
+    // comprobar si se ha podido conectar
+    if(serverConnection.socket == -1)
+    {
+        std::cout << "Error al conectar con el servidor\n";
+        return 0;
+    }
+
+    std::cout << "Conexión exitosa\n";
+
+    //lógica
+    bool exit = false;
+    char* comando;
+
+    for (std::string line; std::cout << "APP > " && std::getline(std::cin, line); )
+    {
+        if (!line.empty()) { process(line, serverConnection.serverId); }
+    }
+
+	//cerrar conexión server
+	closeConnection(serverConnection.serverId);
+	return 0;
+}
+
 
 void endConnection(unsigned int serverId){
     std::cout << "Cerrando conexión...\n";
@@ -315,35 +368,59 @@ void process(std::string line, unsigned int serverId)
     }
 }
 
-int main(int argc, char const *argv[])
-{
 
-    std::cout << "Cliente iniciado\n";
-
-    std::cout << "Conectando con el servidor...\n";
-
-    // iniciar conexión server
-	auto serverConnection = initClient(IP, 15000);
+bool conectarBroker(char* &IP, int &PUERTO){
+    auto serverConnection = initClient(IP_BROKER, PUERTO_BROKER);
 
     // comprobar si se ha podido conectar
     if(serverConnection.socket == -1)
     {
-        std::cout << "Error al conectar con el servidor\n";
-        return 0;
+        std::cout << "Error al conectar con el broker (servidor del broker no responde)\n";
+        return false;
     }
 
-    std::cout << "Conexión exitosa\n";
+    // enviar petición de operación
+    std::vector<unsigned char> buffOut;
 
-    //lógica
-    bool exit = false;
-    char* comando;
+    // empaquetar operación
+    pack(buffOut, opConnectClient); // operación de conexión
 
-    for (std::string line; std::cout << "APP > " && std::getline(std::cin, line); )
+    // empaquetar tipo de objetos
+    pack(buffOut, tipoFilemanager);
+
+    // enviar operación
+    sendMSG(serverConnection.serverId, buffOut);
+
+    // recibir respuesta
+    std::vector<unsigned char> buffIn;
+    recvMSG(serverConnection.serverId, buffIn);
+
+    // desempaquetar respuesta
+    int ok = unpack<int>(buffIn);
+
+    if(ok)
     {
-        if (!line.empty()) { process(line, serverConnection.serverId); }
-    }
+        std::cout << "Conexión con el broker establecida\n";
 
-	//cerrar conexión server
-	closeConnection(serverConnection.serverId);
-	return 0;
+        // desempaquetar ip
+        std::string ip;
+        int ipLength = unpack<int>(buffIn);
+        ip.resize(ipLength);
+        unpackv(buffIn, ip.data(), ipLength);
+        
+        // desempaquetar puerto
+        int puerto = unpack<int>(buffIn);
+
+        // guardar datos del servidor de objetos
+        IP = new char[ipLength];
+        strcpy(IP, ip.data());
+        PUERTO = puerto;
+
+        return true;
+    }
+    else
+    {
+        std::cout << "Error al conectar con el broker (no hay servidores de objetos)\n";
+        return false;
+    }
 }
