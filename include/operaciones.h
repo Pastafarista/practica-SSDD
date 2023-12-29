@@ -11,6 +11,17 @@ typedef enum{
 	opWriteFile=3,
 }tipoOperacion;
 
+typedef enum{
+	opConnectServer=0,
+	opConnectClient=1,
+	opDisconnect=2
+}opBroker;
+
+typedef enum{
+	tipoFilemanager=0,
+	tipoMulmatrix=1,
+}tipoServidor;
+
 template <typename T>
 
 void pack(std::vector<unsigned char> &packet, T data)

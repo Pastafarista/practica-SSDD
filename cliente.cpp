@@ -8,6 +8,8 @@
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 # include "./include/filemanager.h"
+# define IP "172.24.247.220"
+# define PUERTO_BROKER 15015
 # define RUTA "/usr/src/cliente/files"
 
 void endConnection(unsigned int serverId){
@@ -321,7 +323,7 @@ int main(int argc, char const *argv[])
     std::cout << "Conectando con el servidor...\n";
 
     // iniciar conexión server
-	auto serverConnection = initClient("172.24.247.220", 15000);
+	auto serverConnection = initClient(IP, 15000);
 
     // comprobar si se ha podido conectar
     if(serverConnection.socket == -1)
