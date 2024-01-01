@@ -7,9 +7,9 @@
 # include <thread>
 # include "./include/utils.h"
 # include "./include/conexion_cliente.h"
-# define IP "172.24.247.220"
+# define IP "3.226.246.58"
 # define PUERTO 15000
-# define IP_BROKER "172.24.247.220"
+# define IP_BROKER "3.226.246.58"
 # define PUERTO_BROKER 15015
 
 void atiendeCliente(int clientId); // función que atiende a un cliente

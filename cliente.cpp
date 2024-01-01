@@ -8,7 +8,7 @@
 # include "./include/utils.h"
 # include "./include/operaciones.h"
 # include "./include/filemanager.h"
-# define IP_BROKER "172.24.247.220"
+# define IP_BROKER "3.226.246.58"
 # define PUERTO_BROKER 15015
 # define RUTA "/usr/src/cliente/files"
 
