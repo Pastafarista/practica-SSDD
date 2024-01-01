@@ -1,0 +1,14 @@
+FROM gcc:latest
+
+# Copiar archivos
+
+COPY include /usr/src/cliente/include
+COPY cliente.cpp /usr/src/cliente
+COPY files /usr/src/cliente/files
+WORKDIR /usr/src/cliente
+
+# Compilar y ejecutar
+
+RUN g++ cliente.cpp include/conexion_cliente.h include/filemanager.cpp include/filemanager.h include/operaciones.h include/utils.cpp include/utils.h -o cliente.exe
+RUN ["chmod", "+x", "cliente.exe"]
+ENTRYPOINT [ "./cliente.exe"] 
