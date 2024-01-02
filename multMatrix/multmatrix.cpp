@@ -1,3 +1,6 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS 2023/2024
+
 #include "multmatrix.h"
 #include "multmatrix.h"
 #include <stdio.h>
@@ -25,7 +28,7 @@ multMatrix::multMatrix()
  */
 matrix_t *multMatrix::readMatrix(std::string fileName)
 {
-    FILE* f=fopen(fileName,"r");
+    FILE* f=fopen(fileName.data(),"r");
     if(f==0)
     {
         std::cout<< "ERROR: Fichero " << std::string(fileName) <<" no existe\n";
@@ -88,7 +91,7 @@ matrix_t *multMatrix::multMatrices(matrix_t *m1, matrix_t* m2)
  */
 void multMatrix::writeMatrix(matrix_t *m,std::string fileName)
 {
- FILE* f=fopen(fileName,"w");
+ FILE* f=fopen(fileName.data(),"w");
  fprintf(f,"%d %d\n",m->rows,m->cols);
 
  for(int i=0;i<m->rows*m->cols;i++)

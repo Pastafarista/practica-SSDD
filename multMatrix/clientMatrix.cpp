@@ -1,3 +1,6 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS  2023/2024
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -14,18 +17,32 @@ clientMatrix::clientMatrix(){
 
 	buffOut.resize(0);
 	buffIn.resize(0);
+	
+		
+	std::cout << "Conectando con el servidor " << this->ipServer << ":" << this->port << std::endl;
 
+	this->server = initClient(this->ipServer, this->port);
+
+	if(this->server.socket == -1)
+	{
+		std::cout << "Error al conectar con el servidor (el sercidor no responde)\n";
+		return;
+	}
 	
+	// Enviamos al servidor la operación de constructor
 	pack<rpcTipoOperacion>(buffOut, constructorClientOp);
-	
+
 	sendMSG(this->server.serverId, buffOut);
+	
+	// Recibimos la respuesta del servidor
 	recvMSG(this->server.serverId, buffIn);
 
 	int ok = unpack<int>(buffIn);
 	if(ok){
-		this->server = initClient(this->ipServer,this->port);
+		std::cout << "Conexión exitosa con el servidor\n";
 	}else{
 		std::cout << "Error al iniciar conexión con server\n";
+		return;
 	}
 }
 
@@ -57,7 +74,7 @@ matrix_t *clientMatrix::readMatrix(std::string fileName){
 	buffIn.resize(0);
 
 	//Empaquetamos operación, empaquetamos longitud del nombre del archivo y el nombre
-	pack<rpcTipoOperacion>(buffOut,writeOp);
+	pack<rpcTipoOperacion>(buffOut,readOp);
 	pack(buffOut, (int)fileName.length());
 	packv(buffOut, fileName.data(), (int)fileName.length());
 	
@@ -137,8 +154,8 @@ void clientMatrix::writeMatrix(matrix_t *m,std::string fileName){
 	pack(buffOut,(int)m->cols);
 	packv(buffOut, m->data, (m->rows * m->cols));
 
-	pack(buffOut, (int)fileName.length());
-	packv(buffOut, fileName.data(), (int)fileName.length());
+	pack(buffOut, (int)fileName.length()+1);
+	packv(buffOut, fileName.data(), (int)fileName.length()+1);
 
 	//Enviamos operación
 	sendMSG(this->server.serverId, buffOut);
@@ -153,6 +170,9 @@ void clientMatrix::writeMatrix(matrix_t *m,std::string fileName){
 }
 
 matrix_t *clientMatrix::createIdentity(int rows, int cols){
+
+	std::cout << "Creando matriz identidad " << rows << "x" << cols << std::endl;
+
 	std::vector<unsigned char> buffIn;
 	std::vector<unsigned char> buffOut;
 	buffOut.resize(0);
@@ -183,22 +203,27 @@ matrix_t *clientMatrix::createIdentity(int rows, int cols){
 }
 
 matrix_t *clientMatrix::createRandMatrix(int rows, int cols){
+	
+	std::cout << "Creando matriz aleatoria " << rows << "x" << cols << std::endl;
 
 	std::vector<unsigned char> buffIn;
 	std::vector<unsigned char> buffOut;
 	buffOut.resize(0);
 	buffIn.resize(0);
 
-	//Empaquetamos el tipo de operació
+	//Empaquetamos el tipo de operación
 	pack<rpcTipoOperacion>(buffOut,randOp);
 	pack(buffOut,(int)rows);
 	pack(buffOut,(int)cols);
-
+	
 	//Enviamos operación
 	sendMSG(this->server.serverId, buffOut);
 
+	std::cout << "Esperando respuesta del servidor\n";
+
 	//Recibimos respuesta
 	recvMSG(this->server.serverId, buffIn);
+
 	int ok = unpack<int>(buffIn);
 
 	if(ok){
@@ -210,6 +235,10 @@ matrix_t *clientMatrix::createRandMatrix(int rows, int cols){
 		unpackv(buffIn, matrix->data, (matrix->rows * matrix->cols));
 
 		return matrix;
+	}
+	else{
+		std::cout << "Error al crear la matriz aleatoria\n";
+		return NULL;
 	}
 }
 

@@ -1,4 +1,9 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS 2023/2024
+
 #pragma once
+#include <iostream>
+#include <vector>
 
 typedef enum{
 	

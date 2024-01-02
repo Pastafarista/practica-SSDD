@@ -1,16 +1,20 @@
+// Authors: Antonio Cabrera y Alejandro Gómez
+// Group: 3º MAIS 2023/2024
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <iostream>
 #include "utils.h"
 #include "multmatrix.h"
-
+#define IP "127.0.0.1"
+#define PUERTO 15030
 
 class clientMatrix{
 
 private:
-    std::string ipServer = "172.31.53.9";
-    int port = 15000;
+    std::string ipServer = IP;
+    int port = PUERTO;
     connection_t server;
 public:
     clientMatrix();     //Constructor de clienteMatrix, realiza la conexión con el  servidor

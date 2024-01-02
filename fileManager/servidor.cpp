@@ -46,6 +46,8 @@ int main()
 		std::thread* th=new std::thread (atiendeCliente,clientId);
     }
 
+    close(serverSocket);
+
     return 0;
 }
 
