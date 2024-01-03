@@ -4,7 +4,7 @@
 # Description: Script para compilar el broker
 
 # Compilar
-g++ broker.cpp operaciones.h utils.h utils.cpp -o broker
+g++ -pthread broker.cpp operaciones.h utils.h utils.cpp -o broker
 
 # Dar persmisos
 chmod +x broker
