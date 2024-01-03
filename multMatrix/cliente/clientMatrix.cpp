@@ -12,7 +12,7 @@
 
 // constantes
 # define PUERTO_BROKER 15015
-const char *IP_BROKER = "127.0.0.1";
+const char *IP_BROKER = "3.226.246.58";
 
 void printMatrix(matrix_t* m);	// imprimir los contenidos de una matriz
 

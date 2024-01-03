@@ -10,7 +10,7 @@
 # include "./operaciones.h"
 # include "./filemanager.h"
 
-const char *RUTA = "/home/antonio/proyectos/PRACTICA-SSDD/fileManager/servidor/files";
+const char *RUTA = "/home/antonio/Proyectos/remote-objects/fileManager/servidor/files";
 
 class ConexionCliente{
 
