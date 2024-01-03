@@ -81,12 +81,17 @@ class ConexionCliente{
 					res = m->readMatrix(ruta.data());
 
 					if(res != NULL){  //Si la matriz leida no da  error
+							  //
+						// mostrar por pantalla la matriz leida
+						std::cout << "Cliente " << clientId << " - La matriz de " << fileName << " es:\n";
+						printMatrix(res);
 
 						//Empaquetamos la matriz leida
 						pack(buffOut, (int)1); //Se ha leido correctamente
 						pack(buffOut,(int)res->rows);
 						pack(buffOut,(int)res->cols);
-						packv(buffOut,res->data,(res->rows * res->cols));	
+						packv(buffOut,res->data,(res->rows * res->cols));
+
 					}else{
 						std::cout << "Cliente " << clientId << " - No se ha podido leer la matriz\n";
 						pack(buffOut, (int)0); //No se ha leido correctamente
@@ -115,7 +120,7 @@ class ConexionCliente{
 					// mostramos la operación por pantalla
 					std::cout << "\nCliente " << clientId << " - Multiplicando:\n";
 					printMatrix(m1);
-					std::cout << "POR\n";
+					std::cout << "X\n";
 					printMatrix(m2);
 					std::cout << std::endl;
 					
@@ -168,6 +173,10 @@ class ConexionCliente{
 
 					// empaquetamos la respuesta de éxito
 					pack(buffOut, (int)1);
+
+					// mostrar por pantalla el resultado
+					std::cout << "Cliente " << clientId << " - Escrito en " << fileName << " la matriz:\n";
+					printMatrix(m1);
 				}break;
 					
 				case identityOp:
@@ -182,7 +191,7 @@ class ConexionCliente{
 					m1 = m->createIdentity(m1->rows, m1->cols);
 					
 					// mostramos la matriz por pantalla
-					std::cout << "Cliente " << clientId << " - La matriz es:\n";
+					std::cout << "Cliente " << clientId << " - La matriz identidad es:\n";
 					printMatrix(m1);
 
 					//Empaquetamos respuesta
@@ -204,7 +213,7 @@ class ConexionCliente{
 					m1 = m->createRandMatrix(m1->rows, m1->cols);
 					
 					// la mostramos por pantalla
-					std::cout << "Cliente " << clientId << " - La matriz es:\n";
+					std::cout << "Cliente " << clientId << " - La matriz aleatoria es:\n";
 					printMatrix(m1);
 
 					//Empaquetamos respuesta
@@ -239,7 +248,8 @@ class ConexionCliente{
 };
 
 void printMatrix(matrix_t* m)
-{
+{	
+	std::cout << std::endl;
 	for(int i = 0; i < m->rows; i++)
 	{	
 
@@ -250,6 +260,7 @@ void printMatrix(matrix_t* m)
 
 		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 }
 
 

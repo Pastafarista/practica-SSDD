@@ -17,15 +17,15 @@ class fichaServidor
 
         void print()
         {
-            std::cout << "ip: " << ip << "\n";
-            std::cout << "puerto: " << puerto << "\n";
+            std::cout << "Ip: " << ip << "\n";
+            std::cout << "Puerto: " << puerto << "\n";
             
             if(tipo == tipoFilemanager)
-                std::cout << "tipo: filemanager\n";
+                std::cout << "Tipo: filemanager\n";
             else if(tipo = tipoMultmatrix)
-                std::cout << "tipo: multmatrix\n";
+                std::cout << "Tipo: multmatrix\n";
             else
-                std::cout << "tipo: desconocido\n";
+                std::cout << "Tipo: desconocido\n";
         }
 };
 
@@ -111,6 +111,20 @@ int main()
                 {
                     // desempaquetemaos el tipo de cliente
                     tipoServidor tipo = unpack<tipoServidor>(buffIn);
+			
+		    // mostrar por pantalla los datos del cliente
+		    std::cout << "Cliente " << clientId << " (cliente) - datos:\n";
+		    if(tipo == tipoFilemanager)
+		    {
+			std::cout << "Tipo: filemanager\n";
+		    }
+		    else if(tipo == tipoMultmatrix)
+		    {
+			std::cout << "Tipo: multmatrix\n";
+		    }
+		    else{
+			std::cout << "Tipo: desconocido\n";
+		    }
 
                     // buscar un servidor de objetos del tipo solicitado
                     int serverId = -1;
@@ -144,9 +158,9 @@ int main()
 
                     // empaquetar puerto
                     pack(buffOut, servidores[serverId].puerto);
-
                 }
             }  
+	    break;
 
             default:
             {
