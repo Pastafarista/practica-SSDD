@@ -98,7 +98,7 @@ bool clientMatrix::conectarBroker(){
         	std::string ip;
         	int ipLength = unpack<int>(buffIn);
         	ip.resize(ipLength);
-        	unpackv(buffIn, ip.data(), ipLength);
+        	unpackv(buffIn, (char *)ip.data(), ipLength);
         
         	// desempaquetar puerto
         	int puerto = unpack<int>(buffIn);

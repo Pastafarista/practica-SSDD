@@ -4,7 +4,7 @@
 #Description: Compilar el servidor de fileManager
 
 # Compilar
-g++ servidor.cpp operaciones.h utils.h utils.cpp conexion_cliente.h filemanager.h filemanager.cpp -o servidor
+g++ -pthread servidor.cpp operaciones.h utils.h utils.cpp conexion_cliente.h filemanager.h filemanager.cpp -o servidor
 
 # Dar permisos
 chmod +x servidor

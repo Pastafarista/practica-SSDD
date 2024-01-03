@@ -90,7 +90,7 @@ class ConexionCliente{
                     std::string fileName;
                     int fileNameLength = unpack<int>(buffIn);
                     fileName.resize(fileNameLength);
-                    unpackv(buffIn, fileName.data(), fileNameLength);
+                    unpackv(buffIn, (char *)fileName.data(), fileNameLength);
 
                     // comprobar si existe el fichero
                     if(!fileManager->fileExists((char*)fileName.data()))
@@ -124,7 +124,7 @@ class ConexionCliente{
                     std::string fileName;
                     int fileNameLength = unpack<int>(buffIn);
                     fileName.resize(fileNameLength);
-                    unpackv(buffIn, fileName.data(), fileNameLength);
+                    unpackv(buffIn, (char *)fileName.data(), fileNameLength);
 
                     // recibir datos
                     int dataLength = unpack<int>(buffIn);

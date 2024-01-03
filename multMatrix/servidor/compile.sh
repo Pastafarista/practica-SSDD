@@ -5,7 +5,7 @@
 # Description: Script para compilar el servidor de mulmatrix
 
 # Compilar
-g++ serverMatrix.cpp operacionesMatrix.h multmatrix.h multmatrix.cpp utils.h utils.cpp conexion_cliente.h -o servidor
+g++ -pthread serverMatrix.cpp operacionesMatrix.h multmatrix.h multmatrix.cpp utils.h utils.cpp conexion_cliente.h -o servidor
 
 # Dar permisos
 chmod +x servidor

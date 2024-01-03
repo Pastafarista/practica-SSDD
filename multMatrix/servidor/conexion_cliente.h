@@ -70,7 +70,7 @@ class ConexionCliente{
 					std::string fileName;
 					int datoLength=unpack<int>(buffIn);
 					fileName.resize(datoLength);
-					unpackv(buffIn, fileName.data(), datoLength);
+					unpackv(buffIn, (char *)fileName.data(), datoLength);
 					
 					// leer de la carpeta files
 					std::string carpeta = "files/";
@@ -162,7 +162,7 @@ class ConexionCliente{
 					std::string fileName;
 					int datoLength=unpack<int>(buffIn);
 					fileName.resize(datoLength);
-					unpackv(buffIn, fileName.data(), datoLength);
+					unpackv(buffIn, (char *)fileName.data(), datoLength);
 					
 					// crear una ruta para que se guarde en la carpeta files
 					std::string carpeta = "files/";

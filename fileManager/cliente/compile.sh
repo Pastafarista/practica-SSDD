@@ -4,7 +4,7 @@
 #Description: Compilar el cliente de fileManager
 
 # Compilar
-g++ cliente.cpp operaciones.h utils.h utils.cpp filemanager.h filemanager.cpp -o cliente
+g++ -pthread cliente.cpp operaciones.h utils.h utils.cpp filemanager.h filemanager.cpp -o cliente
 
 # Dar permisos
 chmod +x cliente
