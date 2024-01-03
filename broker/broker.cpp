@@ -72,7 +72,7 @@ int main()
                 std::string ip;
                 int ipLength = unpack<int>(buffIn);
                 ip.resize(ipLength);
-                unpackv(buffIn, ip.data(), ipLength);
+                unpackv(buffIn, (char *)ip.data(), ipLength);
 
                 // desempaquetamos el puerto
                 int puerto = unpack<int>(buffIn);
@@ -154,7 +154,7 @@ int main()
                     std::string ip = servidores[serverId].ip;
                     int ipLength = ip.size()+1;
                     pack(buffOut, ipLength);
-                    packv(buffOut, ip.data(), ipLength);
+                    packv(buffOut, (char *)ip.data(), ipLength);
 
                     // empaquetar puerto
                     pack(buffOut, servidores[serverId].puerto);
