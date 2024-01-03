@@ -6,6 +6,7 @@
 #include <thread>
 #include <mutex>
 #include <thread>
+#include <pthread.h>
 
 std::map<unsigned int,connection_t> clientList;
 unsigned int contador=0;
