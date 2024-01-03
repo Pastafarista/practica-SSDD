@@ -15,7 +15,12 @@ int main()
 {
 	std::cout << "Main - Operación constructor\n";
 
-	clientMatrix* matrix=new clientMatrix();
+	clientMatrix* matrix = new clientMatrix();
+
+	if(!matrix->running)
+	{
+		return 0;
+	}
 
 	std::cout << "Main - Creando matriz aleatoria 5x5\n";
 	

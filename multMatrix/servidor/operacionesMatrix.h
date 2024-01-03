@@ -5,17 +5,26 @@
 #include <iostream>
 #include <vector>
 
-typedef enum{
-	
+typedef enum{	
 	constructorClientOp=1,
-    readOp=2,
-    multOp=3,
-    writeOp=4,
-    identityOp=5,
-    randOp=6,
-    destructorClientOp=7
-    
+	readOp=2,
+	multOp=3,
+	writeOp=4,
+	identityOp=5,
+	randOp=6,
+	destructorClientOp=7
 }rpcTipoOperacion;
+
+typedef enum{
+	opConnectServer=0,
+	opConnectClient=1,
+	opDisconnectServer=2
+}opBroker;
+
+typedef enum{
+	tipoFilemanager=0,
+	tipoMultmatrix=1,
+}tipoServidor;
 
 template <typename T>
 void pack(std::vector<unsigned char> &packet, T data)

@@ -5,13 +5,6 @@
 # include <vector>
 
 typedef enum{
-	opEndConnection=0,
-	opListFiles=1,
-	opReadFile=2,
-	opWriteFile=3,
-}tipoOperacion;
-
-typedef enum{
 	opConnectServer=0,
 	opConnectClient=1,
 	opDisconnectServer=2
@@ -19,7 +12,7 @@ typedef enum{
 
 typedef enum{
 	tipoFilemanager=0,
-	tipoMulmatrix=1,
+	tipoMultmatrix=1,
 }tipoServidor;
 
 template <typename T>

@@ -10,6 +10,10 @@
 #include "multmatrix.h"
 #include "clientMatrix.h"
 
+// constantes
+# define PUERTO_BROKER 15015
+const char *IP_BROKER = "127.0.0.1";
+
 clientMatrix::clientMatrix(){
 
 	std::vector<unsigned char> buffOut;
@@ -18,6 +22,14 @@ clientMatrix::clientMatrix(){
 	buffOut.resize(0);
 	buffIn.resize(0);
 	
+	std::cout << "Cliente iniciado\n";
+
+	std::cout << "Conectando con el broker...\n";
+
+	if(!this->conectarBroker())
+	{
+		return;
+	}
 		
 	std::cout << "Conectando con el servidor " << this->ipServer << ":" << this->port << std::endl;
 
@@ -25,7 +37,7 @@ clientMatrix::clientMatrix(){
 
 	if(this->server.socket == -1)
 	{
-		std::cout << "Error al conectar con el servidor (el sercidor no responde)\n";
+		std::cout << "Error al conectar con el servidor (el servidor no responde)\n";
 		return;
 	}
 	
@@ -40,10 +52,67 @@ clientMatrix::clientMatrix(){
 	int ok = unpack<int>(buffIn);
 	if(ok){
 		std::cout << "Conexión exitosa con el servidor\n";
+		this->running = true;
 	}else{
 		std::cout << "Error al iniciar conexión con server\n";
 		return;
 	}
+}
+
+bool clientMatrix::conectarBroker(){
+    auto serverConnection = initClient(IP_BROKER, PUERTO_BROKER);
+
+    // comprobar si se ha podido conectar
+    if(serverConnection.socket == -1)
+    {
+        std::cout << "Error al conectar con el broker (servidor del broker no responde)\n";
+        return false;
+    }
+
+    // enviar petición de operación
+    std::vector<unsigned char> buffOut;
+
+    // empaquetar operación
+    pack(buffOut, opConnectClient); // operación de conexión
+
+    // empaquetar tipo de objetos
+    pack(buffOut, tipoMultmatrix);
+
+    // enviar operación
+    sendMSG(serverConnection.serverId, buffOut);
+
+    // recibir respuesta
+    std::vector<unsigned char> buffIn;
+    recvMSG(serverConnection.serverId, buffIn);
+
+    // desempaquetar respuesta
+    int ok = unpack<int>(buffIn);
+
+    if(ok)
+    {
+        std::cout << "Conexión con el broker establecida\n";
+
+        // desempaquetar ip
+        std::string ip;
+        int ipLength = unpack<int>(buffIn);
+        ip.resize(ipLength);
+        unpackv(buffIn, ip.data(), ipLength);
+        
+        // desempaquetar puerto
+        int puerto = unpack<int>(buffIn);
+
+        // guardar datos del servidor de objetos
+        this->ipServer = new char[ipLength];
+        strcpy(this->ipServer, ip.data());
+        this->port = puerto;
+
+        return true;
+    }
+    else
+    {
+        std::cout << "Error al conectar con el broker (no hay servidores de objetos)\n";
+        return false;
+    }
 }
 
 clientMatrix::~clientMatrix(){
@@ -199,6 +268,11 @@ matrix_t *clientMatrix::createIdentity(int rows, int cols){
 		unpackv(buffIn, matrix->data, (matrix->rows * matrix->cols));
 
 		return matrix;
+	}
+	else
+	{
+		std::cout << "Error al crear la matriz identidad\n";
+		return NULL;
 	}
 }
 

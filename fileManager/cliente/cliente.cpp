@@ -370,7 +370,6 @@ void process(std::string line, unsigned int serverId)
     }
 }
 
-
 bool conectarBroker(char* &IP, int &PUERTO){
     auto serverConnection = initClient(IP_BROKER, PUERTO_BROKER);
 

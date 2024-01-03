@@ -19,7 +19,7 @@ typedef enum{
 
 typedef enum{
 	tipoFilemanager=0,
-	tipoMulmatrix=1,
+	tipoMultmatrix=1,
 }tipoServidor;
 
 template <typename T>

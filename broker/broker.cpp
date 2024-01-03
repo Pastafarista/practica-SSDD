@@ -22,8 +22,8 @@ class fichaServidor
             
             if(tipo == tipoFilemanager)
                 std::cout << "tipo: filemanager\n";
-            else if(tipo = tipoMulmatrix)
-                std::cout << "tipo: mulmatrix\n";
+            else if(tipo = tipoMultmatrix)
+                std::cout << "tipo: multmatrix\n";
             else
                 std::cout << "tipo: desconocido\n";
         }
@@ -55,11 +55,11 @@ int main()
 
         std::vector<unsigned char> buffIn;
         std::vector<unsigned char> buffOut;
-        tipoOperacion op;
+        opBroker op;
         recvMSG(clientId, buffIn);
 
         // desempaquetamos la operación
-        op=unpack<tipoOperacion>(buffIn);
+        op=unpack<opBroker>(buffIn);
 
         // procesamos la operación
         switch(op)
