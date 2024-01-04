@@ -9,8 +9,8 @@
 # include "./conexion_cliente.h"
 #include <fstream>
 
-void atiendeCliente(int clientId); // función que atiende a un cliente
-bool conectarBroker(char *IP_BROKER, int PUERTO_BROKER, char *IP, int PUERTO);           // función que conecta con el broker para registrarse como servidor
+void atiendeCliente(int clientId, char *RUTA);	// función que atiende a un cliente
+bool conectarBroker(char *IP_BROKER, int PUERTO_BROKER, char *IP, int PUERTO);	// función que conecta con el broker para registrarse como servidor
 
 int main()
 {
@@ -22,6 +22,7 @@ int main()
     int PUERTO_BROKER = 15015;
     std::string IP_string = "127.0.0.1";
     std::string IP_BROKER_string = "127.0.0.1";
+    std::string RUTA_string = "/home/antonio/Repos/remote-objects/filemanager/servidor/files";
 
     // leer los valores del archivo
     if(dataFile.peek() != std::ifstream::traits_type::eof() && dataFile.is_open())
@@ -30,19 +31,23 @@ int main()
 	dataFile >> PUERTO;
 	dataFile >> IP_BROKER_string;
 	dataFile >> PUERTO_BROKER;
+	dataFile >> RUTA_string;
     }
     
     // convertir las ip a char*
     char *IP = new char[IP_string.size()+1];
     char *IP_BROKER = new char[IP_BROKER_string.size()+1];
+    char *RUTA = new char[RUTA_string.size()+1];
     std::copy(IP_string.begin(), IP_string.end(), IP);
     std::copy(IP_BROKER_string.begin(), IP_BROKER_string.end(), IP_BROKER);
+    std::copy(RUTA_string.begin(), RUTA_string.end(), RUTA);
 
     dataFile.close();
 
     int serverSocket = initServer(PUERTO);
 
     std::cout << "Server iniciado en " << IP << ":" << PUERTO << "\n";
+    std::cout << "Ruta de los archivos: " << RUTA << "\n";
 
     // conectar con el broker
     std::cout << "Conectando con el broker en " << IP_BROKER << ":" << PUERTO_BROKER << "\n";
@@ -66,7 +71,7 @@ int main()
         auto clientId = getLastClientID();
 		
         // creamos un hilo para atender al cliente
-		std::thread* th=new std::thread (atiendeCliente,clientId);
+		std::thread* th=new std::thread (atiendeCliente, clientId, RUTA);
     }
 
     close(serverSocket);
@@ -74,10 +79,10 @@ int main()
     return 0;
 }
 
-void atiendeCliente(int clientId)
+void atiendeCliente(int clientId, char *RUTA)
 {
-	// creamos un objeto de la clase ConexionCliente
-    ConexionCliente c = ConexionCliente(clientId);
+    // creamos un objeto de la clase ConexionCliente
+    ConexionCliente c = ConexionCliente(clientId, RUTA);
  
     // mientras no cierre conexión
     do

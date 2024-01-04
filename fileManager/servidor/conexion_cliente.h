@@ -10,22 +10,22 @@
 # include "./operaciones.h"
 # include "./filemanager.h"
 
-const char *RUTA = "/home/antonio/Repos/remote-objects/fileManager/servidor/files";
-
 class ConexionCliente{
 
 	private:
 		int clientId = -1;
-        bool terminarConexion = false;
-        FileManager* fileManager = new FileManager(RUTA);
-
+	        bool terminarConexion = false;
+		char* RUTA;
+		FileManager* fileManager;
 	public:
-		ConexionCliente(int clientId)
+		ConexionCliente(int clientId, char* RUTA)
 		{
 			if(clientId == -1)
 				std::cout << "Error " << __FILE__ << ":" << __LINE__ << "\n";
 				
 			this->clientId = clientId;
+			this->RUTA = RUTA;
+			this->fileManager = new FileManager(RUTA);
 		};
 		
 		bool connectionClosed()

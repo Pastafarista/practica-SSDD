@@ -5,35 +5,56 @@
 # include <stdlib.h>
 # include <sstream>
 # include <iostream>
+# include <fstream>
 # include "./utils.h"
 # include "./operaciones.h"
 # include "./filemanager.h"
-
-// constantes
-# define PUERTO_BROKER 15015
-const char *IP_BROKER = "3.226.246.58";
-const char *RUTA = "/home/antonio/Repos/remote-objects/fileManager/cliente/files";
 
 void endConnection(unsigned int serverId);  // función que cierra la conexión con el servidor
 void listFiles(unsigned int serverId);    // función que lista los ficheros del servidor
 void readFile(unsigned int serverId, std::string fileName); // función que lee un fichero del servidor
 void writeFile(unsigned int serverId, std::string fileName, std::string data);  // función que escribe un fichero en el servidor
-void uploadFile(unsigned int serverId, std::string fileName);   // función que sube un fichero al servidor
-void downloadFile(unsigned int serverId, std::string fileName); // función que descarga un fichero del servidor
-void process(std::string line, unsigned int serverId);  // función que procesa un comando introducido por el usuario
-bool conectarBroker(char* &IP, int &PUERTO);       // función que conecta con el broker para obtener los datos del servidor (ip y puerto)
+void uploadFile(unsigned int serverId, std::string fileName, char *RUTA);   // función que sube un fichero al servidor
+void downloadFile(unsigned int serverId, std::string fileName, char *RUTA); // función que descarga un fichero del servidor
+void process(std::string line, unsigned int serverId, char *RUTA);  // función que procesa un comando introducido por el usuario
+bool conectarBroker(char *IP_BROKER, int PUERTO_BROKER, char* &IP, int &PUERTO);       // función que conecta con el broker para obtener los datos del servidor (ip y puerto)
 
 int main(int argc, char const *argv[])
 {
-    std::cout << "Cliente iniciado\n";
+    // obtener la información del servidor del archivo data.txt
+    std::ifstream dataFile("data.txt");
     
-    std::cout << "Conectando con el broker...\n";
+    // definir los valores por defecto
+    int PUERTO_BROKER = 15015;
+    std::string IP_BROKER_string = "127.0.0.1";
+    std::string RUTA_string = "/home/antonio/Repos/remote-objects/fileManager/cliente/files";
+
+    // leer los valores del archivo
+    if(dataFile.peek() != std::ifstream::traits_type::eof() && dataFile.is_open())
+    {
+	dataFile >> IP_BROKER_string;
+	dataFile >> PUERTO_BROKER;
+	dataFile >> RUTA_string;
+    }
+    
+    // convertir las ip a char*
+    char *IP_BROKER = new char[IP_BROKER_string.size()+1];
+    std::copy(IP_BROKER_string.begin(), IP_BROKER_string.end(), IP_BROKER);
+    
+    char *RUTA = new char[RUTA_string.size()+1];
+    std::copy(RUTA_string.begin(), RUTA_string.end(), RUTA);
+
+    dataFile.close();
+
+    std::cout << "Cliente iniciado\n";
+    std::cout << "Ruta de los ficheros: " << RUTA << "\n";
+    std::cout << "Conectando con el broker en " << IP_BROKER << ":" << PUERTO_BROKER << "...\n";
 
     char *IP;
     int PUERTO;
 
     // conectar con el broker
-    if(!conectarBroker(IP, PUERTO))
+    if(!conectarBroker(IP_BROKER, PUERTO_BROKER, IP, PUERTO))
     {
         return 0;
     }
@@ -58,7 +79,7 @@ int main(int argc, char const *argv[])
 
     for (std::string line; std::cout << "APP > " && std::getline(std::cin, line); )
     {
-        if (!line.empty()) { process(line, serverConnection.serverId); }
+        if (!line.empty()) { process(line, serverConnection.serverId, RUTA); }
     }
 
 	//cerrar conexión server
@@ -198,7 +219,7 @@ void writeFile(unsigned int serverId, std::string fileName, std::string data)
     }
 }
 
-void uploadFile(unsigned int serverId, std::string fileName)
+void uploadFile(unsigned int serverId, std::string fileName, char *RUTA)
 {
     std::cout<<"Subiendo fichero " << fileName  << "...\n";
 
@@ -221,7 +242,7 @@ void uploadFile(unsigned int serverId, std::string fileName)
     writeFile(serverId, fileName, data);
 }
 
-void downloadFile(unsigned int serverId, std::string fileName)
+void downloadFile(unsigned int serverId, std::string fileName, char *RUTA)
 {
     std::cout<<"Descargando fichero " << fileName  << "...\n";
 
@@ -264,7 +285,7 @@ void downloadFile(unsigned int serverId, std::string fileName)
     }
 }
 
-void process(std::string line, unsigned int serverId)
+void process(std::string line, unsigned int serverId, char *RUTA)
 {
     // separar comando
     std::string tmp; 
@@ -338,7 +359,7 @@ void process(std::string line, unsigned int serverId)
             return;
         }
         else{
-            uploadFile(serverId, words[1]);
+            uploadFile(serverId, words[1], RUTA);
         }
     }
     else if(command == "download")
@@ -350,7 +371,7 @@ void process(std::string line, unsigned int serverId)
             return;
         }
         else{
-            downloadFile(serverId, words[1]); 
+            downloadFile(serverId, words[1], RUTA); 
         }
     }
     else if(command == "help")
@@ -370,7 +391,7 @@ void process(std::string line, unsigned int serverId)
     }
 }
 
-bool conectarBroker(char* &IP, int &PUERTO){
+bool conectarBroker(char *IP_BROKER, int PUERTO_BROKER, char* &IP, int &PUERTO){
     auto serverConnection = initClient(IP_BROKER, PUERTO_BROKER);
 
     // comprobar si se ha podido conectar

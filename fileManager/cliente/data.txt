@@ -1,0 +1,3 @@
+3.230.83.14
+15015
+/home/antonio/Repos/remote-objects/fileManager/cliente/files
