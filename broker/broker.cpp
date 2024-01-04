@@ -6,7 +6,8 @@
 # include <iostream>
 # include "./utils.h"
 # include "./operaciones.h"
-# define PUERTO 15015
+# include <unistd.h>
+# include <fstream>
 
 class fichaServidor
 {
@@ -31,6 +32,20 @@ class fichaServidor
 
 int main()
 {
+    // obtener la información del servidor del archivo data.txt
+    std::ifstream dataFile("data.txt");
+    
+    // definir los valores por defecto
+    int PUERTO = 15015;
+
+    // leer los valores del archivo
+    if(dataFile.peek() != std::ifstream::traits_type::eof() && dataFile.is_open())
+    {
+	dataFile >> PUERTO;
+    }
+    
+    dataFile.close();
+
     // iniciamos el servidor
     int serverSocket = initServer(PUERTO);
 
