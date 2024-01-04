@@ -31,7 +31,7 @@ if [ $1 = "filemanager" ]; then
     echo "Instalando filemanager..."
     
     mkdir ../filemanager
-    cp -r filemanager ../filemanager
+    cp -r fileManager ../filemanager
 
     cd ../filemanager
     rm -rf ../remote_objects
@@ -47,7 +47,7 @@ if [ $1 = "multmatrix" ]; then
     echo "Instalando multmatrix..."
     
     mkdir ../multmatrix
-    cp -r multmatrix ../multmatrix
+    cp -r multMatrix ../multmatrix
 
     cd ../multmatrix
     rm -rf remote_objects
