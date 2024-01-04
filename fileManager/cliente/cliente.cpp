@@ -12,7 +12,7 @@
 // constantes
 # define PUERTO_BROKER 15015
 const char *IP_BROKER = "3.226.246.58";
-const char *RUTA = "/home/antonio/Proyectos/remote-objects/fileManager/cliente/files";
+const char *RUTA = "/home/antonio/Repos/remote-objects/fileManager/cliente/files";
 
 void endConnection(unsigned int serverId);  // función que cierra la conexión con el servidor
 void listFiles(unsigned int serverId);    // función que lista los ficheros del servidor
