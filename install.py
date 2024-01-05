@@ -32,23 +32,26 @@ if app == "broker":
     # Creamos la carpeta donde se instalará el broker
     os.mkdir("../broker")
     
-    # Movemos los archivos del broker a la carpeta creada
-    os.system("cp -r broker/* ../broker")
-    os.chdir("../broker")
-    
-    # Eliminamos los archivos innecesarios
-    os.system("rm -rf ../remote-objects")
+    # Nos movemos a la carpeta del broker
+    os.chdir("broker")
 
     # Compilamos el broker
     os.system("chmod +x ./compile.sh")
     os.system("./compile.sh")
+    
+    # Movemos los archivos del broker a la carpeta creada
+    os.system("cp broker ../../broker")
+    
+    # Nos movemos a la carpeta del broker
+    os.chdir("../../broker")
 
+    # Eliminamos los archivos innecesarios
+    os.system("rm -rf ../remote-objects")
+                     
     # Ejecutamos el broker
     os.system("./broker")
 
 elif app == "filemanager":
-
-
     if(len(sys.argv) != 4):
         print("Uso: python3 install.py filemanager <ip_broker> <ip_filemanager>")
         exit()
@@ -75,12 +78,8 @@ elif app == "filemanager":
     # Creamos la carpeta donde se instalará el filemanager
     os.mkdir("../filemanager")
 
-    # Movemos los archivos del filemanager a la carpeta creada
-    os.system("cp -r fileManager/servidor/* ../filemanager")
-    os.chdir("../filemanager")
-
-    # Eliminamos los archivos innecesarios
-    os.system("rm -rf ../remote-objects")
+    # Nos movemos a la carpeta del servidor de filemanager
+    os.chdir("fileManager/servidor")
 
     # Modificamos el archivo de configuracion del filemanager
     f = open("data.txt", "w")
@@ -94,17 +93,33 @@ elif app == "filemanager":
     os.system("chmod +x ./compile.sh")
     os.system("./compile.sh")
 
+    # Movemos los archivos del filemanager a la carpeta creada
+    os.system("cp servidor ../../../filemanager")
+    os.system("cp data.txt ../../../filemanager")
+    os.system("cp -r files ../../../filemanager")
+    os.chdir("../../../filemanager")
+
+    ruta_files = os.getcwd() + "/files"
+
+    # Modificamos el archivo de configuracion del filemanager
+    f = open("data.txt", "a")
+    f.write(ruta_files)
+    f.close()
+
+    # Eliminamos los archivos innecesarios
+    os.system("rm -rf ../remote-objects")
+
     # Ejecutamos el filemanager
     os.system("./servidor")
 
 elif app == "multmatrix":
 
-    if(len(sys.argv) != 5):
+    if(len(sys.argv) != 4):
         print("Uso: python3 install.py multmatrix <ip_broker> <ip_multmatrix>")
         exit()
 
-    ip_broker = sys.argv[3]
-    ip = sys.argv[4]
+    ip_broker = sys.argv[2]
+    ip = sys.argv[3]
     port = "15030"
     port_broker = "15015"
 
@@ -121,16 +136,12 @@ elif app == "multmatrix":
     # Eliminamos la carpeta del multmatrix si existe
     if os.path.isdir("../multmatrix"):
         os.system("rm -rf ../multmatrix")
-
+    
     # Creamos la carpeta donde se instalará el multmatrix
     os.mkdir("../multmatrix")
 
-    # Movemos los archivos del multmatrix a la carpeta creada
-    os.system("cp -r multMatrix/servidor/* ../multmatrix")
-    os.chdir("../multmatrix")
-
-    # Eliminamos los archivos innecesarios
-    os.system("rm -rf ../remote-objects")
+    # Nos movemos a la carpeta del servidor del multmatrix
+    os.chdir("multMatrix/servidor")
 
     # Modificamos el archivo de configuracion del multmatrix
     f = open("data.txt", "w")
@@ -143,6 +154,15 @@ elif app == "multmatrix":
     # Compilamos el multmatrix
     os.system("chmod +x ./compile.sh")
     os.system("./compile.sh")
+
+    # Movemos los archivos del multmatrix a la carpeta creada
+    os.system("cp servidor ../../../multmatrix")
+    os.system("cp data.txt ../../../multmatrix")
+    os.system("cp -r files ../../../multmatrix")
+    os.chdir("../../../multmatrix")
+
+    # Eliminamos los archivos innecesarios
+    os.system("rm -rf ../remote-objects")
 
     # Ejecutamos el multmatrix
     os.system("./servidor")
