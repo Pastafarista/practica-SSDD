@@ -20,7 +20,7 @@ public:
 	/* Funciones */
 
 	clientMatrix();     //Constructor de clienteMatrix, realiza la conexión con el  servidor
-	bool conectarBroker(); // Obtiene la ip y el puerto del broker de objetos, devuelve true si hay exito y false en caso contrario
+	bool conectarBroker(char *IP_BROKER, int PUERTO_BROKER); // Obtiene la ip y el puerto del broker de objetos, devuelve true si hay exito y false en caso contrario
     	~clientMatrix();   //Destructor de clienteMatrix, desconexión con el servidor        
     	matrix_t* readMatrix(std::string fileName);             //Función que lee una matriz del servidor
     	matrix_t *multMatrices(matrix_t* m1, matrix_t *m2);     //Función que envia dos matrices al servidor, y recibe su multiplicación

@@ -5,19 +5,36 @@
 # include <stdlib.h>
 # include <iostream>
 # include <string>
+# include <fstream>
 # include "utils.h"
 # include "operacionesMatrix.h"
 # include "multmatrix.h"
 # include "clientMatrix.h"
 
-// constantes
-# define PUERTO_BROKER 15015
-const char *IP_BROKER = "3.226.246.58";
-
 void printMatrix(matrix_t* m);	// imprimir los contenidos de una matriz
 
 clientMatrix::clientMatrix(){
 	
+    	// obtener la información del servidor del archivo data.txt
+    	std::ifstream dataFile("data.txt");
+    
+    	// definir los valores por defecto
+    	int PUERTO_BROKER = 15015;
+    	std::string IP_BROKER_string = "127.0.0.1";
+
+    	// leer los valores del archivo
+    	if(dataFile.peek() != std::ifstream::traits_type::eof() && dataFile.is_open())
+    	{
+		dataFile >> IP_BROKER_string;
+		dataFile >> PUERTO_BROKER;
+    	}
+    
+    	// convertir las ip a char*
+    	char *IP_BROKER = new char[IP_BROKER_string.size()+1];
+    	std::copy(IP_BROKER_string.begin(), IP_BROKER_string.end(), IP_BROKER);
+	
+    	dataFile.close();
+
 	// declaramos los buffers de entrada y salida
 	std::vector<unsigned char> buffOut;
 	std::vector<unsigned char> buffIn;
@@ -29,7 +46,7 @@ clientMatrix::clientMatrix(){
 	std::cout << "Conectando con el broker...\n";
 	
 	// si no conecta con el broker salimos del programa, por lo que running=false y se dejará de ejecutar
-	if(!this->conectarBroker())
+	if(!this->conectarBroker(IP_BROKER, PUERTO_BROKER))
 	{
 		return;
 	}
@@ -63,7 +80,7 @@ clientMatrix::clientMatrix(){
 	}
 }
 
-bool clientMatrix::conectarBroker(){
+bool clientMatrix::conectarBroker(char *IP_BROKER, int PUERTO_BROKER){
 
 	// conectar con el servidor del broker
 	auto serverConnection = initClient(IP_BROKER, PUERTO_BROKER);
